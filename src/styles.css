@@ -1,0 +1,61 @@
+* {
+  /* font-family: "Poppins", sans-serif; */
+  /* font-family: "REM", sans-serif; */
+  font-family: "Press Start 2P", cursive;
+}
+
+h1 {
+  font-family: "Press Start 2P", cursive;
+  font-size: 5rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+}
+
+p {
+  /* font-family: "REM", sans-serif; */
+  font-family: "JetBrains Mono", monospace;
+}
+
+button {
+  margin: 30px;
+}
+
+.hidden {
+  display: none;
+}
+
+.container {
+  background-color: #f1f1f8;
+}
+
+.startScreen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameScreen {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.options {
+  display: flex;
+}
+
+.course_details {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
