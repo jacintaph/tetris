@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Press+Start+2P&family=REM:wght@200;400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="board.js"></script>
+    <script type="module" src="tetrominoes.js"></script>
+    <script type="module" src="index.js"></script>
+
+    <title>Tetris</title>
+  </head>
+  <body class="container" id="container">
+    <div class="startScreen" id="startScreen">
+      <div class="header">
+        <h1 class="title">TETRIS</h1>
+      </div>
+
+      <div class="options">
+        <button class="btn start" id="startBtn">Play</button>
+        <button class="btn config" id="configBtn">Configure</button>
+        <button class="btn highscores" id="scoresBtn">Scores</button>
+        <button class="btn exit" id="exitBtn">Exit</button>
+      </div>
+
+      <div class="course_details">
+        <p>
+          2805ICT | T2 | 2023<br />Student: Jacinta Phillips<br />Student
+          Number: s5269420
+        </p>
+      </div>
+    </div>
+
+    <div class="gameScreen hidden" id="canvas">
+      <h2>Game screen</h2>
+
+      <div class="dialogBox hidden" id="dialogBox">
+        <div class="content">Are you sure you want to end the game?</div>
+        <div class="buttons">
+          <button class="btn confirm" id="confirmBtn">Yes</button>
+          <button class="btn cancel" id="cancelBtn">No</button>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="overlay hidden"></div> -->
+
+    <div class="configScreen hidden" id="config">
+      <h2>GAME SETTINGS</h2>
+    </div>
+
+    <div class="scoreScreen hidden" id="highscores">
+      <h2>HIGH SCORES</h2>
+      <table class="scoreList" id="scoreList">
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Score</th>
+        </tr>
+        <tbody class="scoreBody" id="scoreBody"></tbody>
+      </table>
+      <button class="closeBtn btn exit " id="closeBtn">Close</button>
+    </div>
+  </body>
+</html>
