@@ -112,3 +112,51 @@ button {
     rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
   transform: translateY(-2px);
 }
+
+/* ---- HIGH SCORES SCREEN ------ */
+.scoreScreen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: rgb(41, 39, 39);
+  /* background-color: rgba(10, 7, 19, 0.4); */
+  padding: 20px 60px 20px 60px;
+  border: solid #40E1D1 5px;
+  border-radius: 2%;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,
+    rgba(45, 35, 66, 0.3) 0 7px 13px -3px, rgba(10, 7, 19, 0.4) 0 -3px 0 inset;
+}
+
+.scoreScreen h2 {
+  color: #05CCCE;
+  font-size: 3rem;
+  margin-bottom: 60px;
+}
+
+.scoreList {
+  padding: 10px;
+  text-align: center;
+}
+
+.scoreList th {
+  font-size: 1.5rem;
+  padding: 10px 40px 10px 40px;
+  color: #40E1D1;
+}
+
+.scoreBody td {
+  color: white;
+  padding: 10px;
+}
+
+.closeBtn {
+  margin-top: 50px;
+  font-size: 25px !important;
+  height: 40px !important;
+}
