@@ -64,6 +64,33 @@ function exitGame() {
   gameLoop.startScreen();
 }
 
+// Function to display the high scores in a table
+function displayHighScores(scores) {
+  const highScoresTableBody = document.getElementById("scoreBody");
+  highScoresTableBody.innerHTML = "";
+
+  scores.forEach((score) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${score.rank}</td>
+      <td>${score.name}</td>
+      <td>${score.score}</td>
+    `;
+    highScoresTableBody.appendChild(row);
+  });
+}
+
+// Fetch the static test high scores and display them
+function highScores() {
+  gameLoop.highScores();
+  fetch("scores.json")
+    .then((response) => response.json())
+    .then((data) => {
+      displayHighScores(data);
+    })
+    .catch((error) => console.error("Error fetching high scores:", error));
+}
+
 playBtn.addEventListener("click", startGame);
 configBtn.addEventListener("click", config);
 scoresBtn.addEventListener("click", highScores);
