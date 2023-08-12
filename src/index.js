@@ -107,3 +107,23 @@ document.addEventListener("keydown", function () {
   // check if it was esc key press
   gameLoop.toggleScreen("dialogBox", true);
 });
+
+// Config section input validation
+const quantityInputs = document.querySelectorAll('input[id="quantity"]');
+
+// Listen for input event
+quantityInputs.forEach(function (input) {
+  input.addEventListener("input", function () {
+    const inputValue = parseFloat(this.value);
+    console.log(inputValue);
+    const minValue = parseFloat(this.min);
+    const maxValue = parseFloat(this.max);
+
+    // Check if the input value is outside the allowed range
+    if (inputValue < minValue) {
+      this.value = this.min;
+    } else if (inputValue > maxValue) {
+      this.value = this.max;
+    }
+  });
+});
