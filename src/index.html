@@ -8,7 +8,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
-    <script type="module" src="board.js"></script>
+    <script type="module" src="program.js"></script>
     <script type="module" src="tetrominoes.js"></script>
     <script type="module" src="index.js"></script>
 
@@ -50,6 +50,47 @@
 
     <div class="configScreen hidden" id="config">
       <h2>GAME SETTINGS</h2>
+      <table class="configOptions">
+        <tr>
+          <th>FIELD SIZE</th>
+          <td class="fieldSize">
+            <input type="number" id="width" name="width" min="4" max="50" value="10" />
+            x
+            <input type="number" id="height" name="height" min="4" max="200" value="20"/>
+          </td>
+        </tr>
+        <tr>
+          <th>GAME LEVEL</th>
+          <td>
+            <input
+              type="number"
+              id="gameLevel"
+              name="gameLevel"
+              min="1"
+              max="30"
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>GAME MODE</th>
+          <td>
+            <select class="gameMode dropDownBox" name="myDropdown">
+              <option class="dropDown" value="normal">Normal</option>
+              <option class="dropDown" value="extended">Extended</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>PLAYER MODE</th>
+          <td>
+            <select class="playerMode dropDownBox" name="myDropdown">
+              <option class="dropDown" value="player">Player</option>
+              <option class="dropDown" value="ai">AI</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <button class="closeBtn btn exit" id="closeBtn">Close</button>
     </div>
 
     <div class="scoreScreen hidden" id="highscores">
@@ -62,7 +103,7 @@
         </tr>
         <tbody class="scoreBody" id="scoreBody"></tbody>
       </table>
-      <button class="closeBtn btn exit " id="closeBtn">Close</button>
+      <button class="closeBtn btn exit" id="closeBtn">Close</button>
     </div>
   </body>
 </html>
