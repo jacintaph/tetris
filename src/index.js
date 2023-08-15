@@ -12,7 +12,7 @@ const scoresBtn = document.getElementById("scoresBtn");
 const exitBtn = document.getElementById("exitBtn");
 const confirmBtn = document.getElementById("confirmBtn");
 const cancelBtn = document.getElementById("cancelBtn");
-const closeBtn = document.getElementById("closeBtn");
+const closeBtn = document.querySelectorAll(".closeBtn");
 const overlay = document.querySelector(".overlay");
 
 function startGame() {
@@ -97,15 +97,20 @@ scoresBtn.addEventListener("click", highScores);
 
 exitBtn.addEventListener("click", exitApp);
 confirmBtn.addEventListener("click", exitGame);
-closeBtn.addEventListener("click", closeScreen);
+
+for (const btn of closeBtn) {
+  btn.addEventListener("click", closeScreen);
+}
 
 cancelBtn.addEventListener("click", function () {
   gameLoop.toggleScreen("dialogBox", false);
 });
 
-document.addEventListener("keydown", function () {
+document.addEventListener("keydown", function (event) {
   // check if it was esc key press
-  gameLoop.toggleScreen("dialogBox", true);
+  if (event.key === "Escape" || event.key === "Esc") {
+    gameLoop.toggleScreen("dialogBox", true);
+  }
 });
 
 // Config section input validation
