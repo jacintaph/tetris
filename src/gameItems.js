@@ -75,3 +75,5 @@ export const blocks = {
     colour: "blue",
   },
 };
+
+export const BLOCK_SIZE = 30;
