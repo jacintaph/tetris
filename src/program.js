@@ -12,6 +12,7 @@ export class GameLoop {
 
   start() {
     this.toggleScreen("startScreen", false);
+    this.toggleScreen("gameScreen", true);
     this.toggleScreen("canvas", true);
   }
 

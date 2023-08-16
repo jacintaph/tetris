@@ -35,8 +35,25 @@
       </div>
     </div>
 
-    <div class="gameScreen hidden" id="canvas">
-      <h2>Game screen</h2>
+    <div class="gameScreen hidden" id="gameScreen">
+      <div class="gameGrid hidden" id="canvas">
+        <canvas id="board" class="gameBoard"></canvas>
+        <div class="gameStats">
+          <h2>TETRIS</h2>
+          <canvas id="next" class="next"></canvas>
+
+          <div class="stats">
+            <p>Score: <span id="score">0</span></p>
+            <p>Lines: <span id="lines">0</span></p>
+            <p>Level: <span id="level">0</span></p>
+
+            <p>Game Mode: <span id="gameMode"></span></p>
+            <p>Player Mode: <span id="playerMode"></span></p>
+            <p>Group No: <span id="groupNo">21</span></p>
+          </div>
+          <button class="btn playBtn">Play</button>
+        </div>
+      </div>
 
       <div class="dialogBox hidden" id="dialogBox">
         <div class="content">Are you sure you want to end the game?</div>
@@ -46,7 +63,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="overlay hidden"></div> -->
 
     <div class="configScreen hidden" id="config">
       <h2>GAME SETTINGS</h2>
@@ -55,20 +71,22 @@
           <th>FIELD SIZE (w x h)</th>
           <td class="fieldSize">
             <input
-              id="quantity"
+              class="quantity"
+              id="width"
               type="number"
               name="width"
               min="4"
-              max="50"
+              max="20"
               value="10"
             />
             x
             <input
-              id="quantity"
+              class="quantity"
+              id="height"
               type="number"
               name="height"
               min="4"
-              max="200"
+              max="25"
               value="20"
             />
           </td>
@@ -77,7 +95,8 @@
           <th>GAME LEVEL</th>
           <td>
             <input
-              id="quantity"
+              class="quantity"
+              id="gameLevel"
               type="number"
               name="gameLevel"
               min="1"
@@ -89,7 +108,11 @@
         <tr>
           <th>GAME MODE</th>
           <td>
-            <select class="gameMode dropDownBox" name="myDropdown">
+            <select
+              class="gameMode dropDownBox"
+              id="gameModeOption"
+              name="gameModeOption"
+            >
               <option class="dropDown" value="normal">Normal</option>
               <option class="dropDown" value="extended">Extended</option>
             </select>
@@ -98,7 +121,11 @@
         <tr>
           <th>PLAYER MODE</th>
           <td>
-            <select class="playerMode dropDownBox" name="myDropdown">
+            <select
+              class="playerMode dropDownBox"
+              id="playerModeOption"
+              name="playerModeOption"
+            >
               <option class="dropDown" value="player">Player</option>
               <option class="dropDown" value="ai">AI</option>
             </select>
