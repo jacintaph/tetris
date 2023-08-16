@@ -2,6 +2,7 @@
 
 import { Tetromino } from "./tetrominoes.js";
 import { GameLoop } from "./program.js";
+import * as stat from "./gameItems.js";
 
 const gameLoop = new GameLoop();
 
@@ -13,7 +14,7 @@ const exitBtn = document.getElementById("exitBtn");
 const confirmBtn = document.getElementById("confirmBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 const closeBtn = document.querySelectorAll(".closeBtn");
-const overlay = document.querySelector(".overlay");
+const gameScreen = document.getElementById("gameScreen");
 
 function startGame() {
   gameLoop.start();
@@ -47,9 +48,8 @@ function closeScreen() {
 }
 
 function exitGame() {
-  const dialogBox = document.getElementById("dialogBox");
-  gameLoop.toggleScreen("dialogBox", false);
-  // overlay.classList.remove("hidden");
+  // const dialogBox = document.getElementById("dialogBox");
+  gameLoop.toggleScreen("dialogBox", false); // works
 
   const container = document.getElementById("container");
   const childElements = container.children;
@@ -96,31 +96,39 @@ configBtn.addEventListener("click", config);
 scoresBtn.addEventListener("click", highScores);
 
 exitBtn.addEventListener("click", exitApp);
+
 confirmBtn.addEventListener("click", exitGame);
 
+// Close buttons
 for (const btn of closeBtn) {
   btn.addEventListener("click", closeScreen);
 }
 
+// Cancel button Dialog Box
 cancelBtn.addEventListener("click", function () {
   gameLoop.toggleScreen("dialogBox", false);
+  gameLoop.toggleScreen("canvas", true);
 });
 
+// Show Dialog Box
 document.addEventListener("keydown", function (event) {
-  // check if it was esc key press
-  if (event.key === "Escape" || event.key === "Esc") {
-    gameLoop.toggleScreen("dialogBox", true);
+  // Only allow esc key press with on the game screen
+  if (!gameScreen.classList.contains("hidden")) {
+    // check if it was esc key press
+    if (event.key === "Escape" || event.key === "Esc") {
+      gameLoop.toggleScreen("canvas", false);
+      gameLoop.toggleScreen("dialogBox", true);
+    }
   }
 });
 
 // Config section input validation
-const quantityInputs = document.querySelectorAll('input[id="quantity"]');
+const quantityInputs = document.querySelectorAll(".quantity");
 
 // Listen for input event
 quantityInputs.forEach(function (input) {
   input.addEventListener("input", function () {
     const inputValue = parseFloat(this.value);
-    console.log(inputValue);
     const minValue = parseFloat(this.min);
     const maxValue = parseFloat(this.max);
 
@@ -132,3 +140,44 @@ quantityInputs.forEach(function (input) {
     }
   });
 });
+
+// Access Config Screen Input options
+const boardWidth = document.getElementById("width");
+const boardheight = document.getElementById("height");
+const gameLevel = document.getElementById("gameLevel");
+var widthValue = boardWidth.value;
+var heightValue = boardheight.value;
+var gameLevelValue = gameLevel.value;
+
+// Access Config Screen dropdown options
+const gameMode = document.getElementById("gameModeOption");
+const playerMode = document.getElementById("playerModeOption");
+var gameModeValue = gameMode.value;
+var playerModeValue = playerMode.value;
+
+function updateInputValue(elementName, valueName) {
+  elementName.addEventListener("input", function () {
+    valueName = elementName.value;
+  });
+}
+
+updateInputValue(boardWidth, widthValue);
+updateInputValue(gameLevel, gameLevelValue);
+updateInputValue(boardheight, heightValue);
+updateInputValue(gameMode, gameModeValue);
+updateInputValue(playerMode, playerModeValue);
+
+// TESTING
+// console.log(widthValue, heightValue, gameLevelValue);
+// console.log(gameModeValue, playerModeValue);
+
+// SET CANVAS SIZING
+const canvas = document.getElementById("board");
+const ctx = canvas.getContext("2d");
+
+// Calculate size of canvas from constants.
+ctx.canvas.width = widthValue * stat.BLOCK_SIZE;
+ctx.canvas.height = heightValue * stat.BLOCK_SIZE;
+
+// Scale blocks
+ctx.scale(stat.BLOCK_SIZE, stat.BLOCK_SIZE);
