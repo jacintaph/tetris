@@ -1,4 +1,4 @@
-import * as constants from "./gameItems.js";
+import * as constants from "./variables.js";
 
 export class Tetromino {
   constructor(index, boardWidth) {

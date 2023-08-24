@@ -1,11 +1,11 @@
 "use strict";
 
-import { Tetromino } from "./tetrominoes.js";
-import { GameLoopView } from "./program.js";
-import * as config from "./gameItems.js";
-import { Board } from "./board.js";
-import { Controller } from "./controller.js"
-import { Game } from "./game.js"
+import { Tetromino } from "./gameItems/tetrominoes.js";
+import { GameLoopView } from "./programView.js";
+import * as config from "./gameItems/variables.js";
+import { Board } from "./gameItems/board.js";
+import { Controller } from "./controller.js";
+import { Game } from "./game.js";
 
 // Instantiate New Game Loop View
 // Includes rendering function
@@ -99,7 +99,7 @@ function displayHighScores(scores) {
 // Fetch the static test high scores and display them
 function highScores() {
   gameLoop.highScores();
-  fetch("scores.json")
+  fetch("./data/scores.json")
     .then((response) => response.json())
     .then((data) => {
       displayHighScores(data);
