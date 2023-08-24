@@ -1,6 +1,6 @@
-import * as config from "./gameItems.js";
-import { Board } from "./board.js";
-import { Tetromino } from "./tetrominoes.js";
+import * as config from "./gameItems/variables.js";
+import { Board } from "./gameItems/board.js";
+import { Tetromino } from "./gameItems/tetrominoes.js";
 
 export class Game {
   constructor() {

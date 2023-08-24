@@ -11,6 +11,10 @@ html {
   height: 100%;
 }
 
+span {
+  font-weight: 800;
+}
+
 h1 {
   font-family: "Press Start 2P", cursive;
   font-size: 5rem;
@@ -20,9 +24,10 @@ h2 {
   font-size: 2.5rem;
 }
 
-p {
-  /* font-family: "REM", sans-serif; */
+p,
+span {
   font-family: "JetBrains Mono", monospace;
+  font-size: 20px;
 }
 
 button {
@@ -232,13 +237,27 @@ td {
 }
 
 /* ------ GAME SCREEN ------- */
-.gameScreen {
+/* .gameScreen {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #ddecff;
+} */
+
+/* Set the gameScreen to take up the whole window */
+.gameScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ddecff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 
 .gameGrid {
   display: flex;
@@ -264,6 +283,7 @@ td {
 .next {
   background-color: #d4e3f7;
   border: #7286a1 solid 5px;
+  width: 75%;
 }
 
 .gameBoard {
@@ -275,4 +295,56 @@ td {
 .playBtn {
   background-color: #00f707;
   font-size: 24px;
+}
+
+#pause.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  z-index: 99; /* Make sure the overlay is displayed above other content */
+  display: none; /* Initially hide the overlay */
+}
+
+/* Styles for the pause content */
+#pause.overlay .content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+
+}
+
+#pause.overlay.active {
+  display: block;
+}
+
+#lost.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  z-index: 99; /* Make sure the overlay is displayed above other content */
+  display: none; /* Initially hide the overlay */
+}
+
+/* Styles for the pause content */
+#lost.overlay .content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+
+}
+
+#lost.overlay.active {
+  display: block;
 }

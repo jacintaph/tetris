@@ -1,4 +1,4 @@
-import * as config from "./gameItems.js";
+import * as config from "./gameItems/variables.js";
 
 export class GameLoopView {
   constructor(game) {
@@ -118,7 +118,6 @@ export class GameLoopView {
 
   renderLostScreen(state) {
     const lostOverlay = document.getElementById("lost");
-    lostOverlay.classList.toggle("active"); 
+    lostOverlay.classList.toggle("active");
   }
 }
-

@@ -1,10 +1,25 @@
 "use strict";
 
-import { Tetromino } from "./tetrominoes.js";
-import { GameLoop } from "./program.js";
-import * as stat from "./gameItems.js";
+import { Tetromino } from "./gameItems/tetrominoes.js";
+import { GameLoopView } from "./programView.js";
+import * as config from "./gameItems/variables.js";
+import { Board } from "./gameItems/board.js";
+import { Controller } from "./controller.js";
+import { Game } from "./game.js";
 
-const gameLoop = new GameLoop();
+// Instantiate New Game Loop View
+// Includes rendering function
+const gameLoop = new GameLoopView();
+
+// Instantiate new Game class
+const game = new Game();
+const controller = new Controller(game, gameLoop);
+let playBtnFg = false;
+
+function play() {
+  controller.play();
+  playBtnFg = true; // track btn press to prevent multiple instances
+}
 
 /* -------- Event Listeners -------- */
 const playBtn = document.getElementById("startBtn");
@@ -20,7 +35,7 @@ function startGame() {
   gameLoop.start();
 }
 
-function config() {
+function configuration() {
   gameLoop.config();
 }
 
@@ -61,6 +76,7 @@ function exitGame() {
       gameLoop.toggleScreen(element.id, false);
     }
   }
+  controller.clearGame();
   gameLoop.startScreen();
 }
 
@@ -83,7 +99,7 @@ function displayHighScores(scores) {
 // Fetch the static test high scores and display them
 function highScores() {
   gameLoop.highScores();
-  fetch("scores.json")
+  fetch("./data/scores.json")
     .then((response) => response.json())
     .then((data) => {
       displayHighScores(data);
@@ -92,7 +108,7 @@ function highScores() {
 }
 
 playBtn.addEventListener("click", startGame);
-configBtn.addEventListener("click", config);
+configBtn.addEventListener("click", configuration);
 scoresBtn.addEventListener("click", highScores);
 
 exitBtn.addEventListener("click", exitApp);
@@ -108,9 +124,16 @@ for (const btn of closeBtn) {
 cancelBtn.addEventListener("click", function () {
   gameLoop.toggleScreen("dialogBox", false);
   gameLoop.toggleScreen("canvas", true);
+
+  if (controller.playing) {
+    controller.paused = false;
+  }
+  if (controller.paused) {
+    controller.play();
+  }
 });
 
-// Show Dialog Box
+// Show Dialog Box or Pause overlay
 document.addEventListener("keydown", function (event) {
   // Only allow esc key press with on the game screen
   if (!gameScreen.classList.contains("hidden")) {
@@ -143,41 +166,64 @@ quantityInputs.forEach(function (input) {
 
 // Access Config Screen Input options
 const boardWidth = document.getElementById("width");
-const boardheight = document.getElementById("height");
+const boardHeight = document.getElementById("height");
 const gameLevel = document.getElementById("gameLevel");
-var widthValue = boardWidth.value;
-var heightValue = boardheight.value;
-var gameLevelValue = gameLevel.value;
 
 // Access Config Screen dropdown options
 const gameMode = document.getElementById("gameModeOption");
 const playerMode = document.getElementById("playerModeOption");
-var gameModeValue = gameMode.value;
-var playerModeValue = playerMode.value;
 
-function updateInputValue(elementName, valueName) {
+// Inputs Object
+const inputValues = {
+  widthValue: boardWidth.value,
+  heightValue: boardHeight.value,
+  gameLevelValue: gameLevel.value,
+  gameModeValue: gameMode.value,
+  playerModeValue: playerMode.value,
+};
+
+function updateInputValue(elementName, valueRef) {
   elementName.addEventListener("input", function () {
-    valueName = elementName.value;
+    inputValues[valueRef] = elementName.value;
+    updateDisplayValues();
+
+    updateCanvasSize();
   });
 }
 
-updateInputValue(boardWidth, widthValue);
-updateInputValue(gameLevel, gameLevelValue);
-updateInputValue(boardheight, heightValue);
-updateInputValue(gameMode, gameModeValue);
-updateInputValue(playerMode, playerModeValue);
+function updateDisplayValues() {
+  document.getElementById("level").textContent = inputValues.gameLevelValue;
+  document.getElementById("gameMode").textContent = inputValues.gameModeValue;
+  document.getElementById("playerMode").textContent =
+    inputValues.playerModeValue;
+}
 
-// TESTING
-// console.log(widthValue, heightValue, gameLevelValue);
-// console.log(gameModeValue, playerModeValue);
+// Add event listener to all inputs
+// Updates canvas size at the same time
+updateInputValue(boardWidth, "widthValue");
+updateInputValue(boardHeight, "heightValue");
+updateInputValue(gameLevel, "gameLevelValue");
+updateInputValue(gameMode, "gameModeValue");
+updateInputValue(playerMode, "playerModeValue");
 
-// SET CANVAS SIZING
-const canvas = document.getElementById("board");
-const ctx = canvas.getContext("2d");
+updateDisplayValues();
 
-// Calculate size of canvas from constants.
-ctx.canvas.width = widthValue * stat.BLOCK_SIZE;
-ctx.canvas.height = heightValue * stat.BLOCK_SIZE;
+function updateCanvasSize() {
+  // Update canvas sizing
+  ctx.canvas.width = inputValues.widthValue * config.BLOCK_SIZE;
+  ctx.canvas.height = inputValues.heightValue * config.BLOCK_SIZE;
 
-// Scale blocks
-ctx.scale(stat.BLOCK_SIZE, stat.BLOCK_SIZE);
+  // Scale blocks
+  ctx.scale(config.BLOCK_SIZE, config.BLOCK_SIZE);
+}
+
+window.play = play;
+const width = inputValues.widthValue;
+const height = inputValues.heightValue;
+
+document.addEventListener("keydown", function (event) {
+  if (event.key === "p" || event.key === "P") {
+    const pauseOverlay = document.getElementById("pause");
+    pauseOverlay.classList.toggle("active"); // Toggle the 'active' class
+  }
+});
