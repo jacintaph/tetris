@@ -11,6 +11,7 @@
     <script type="module" src="program.js"></script>
     <script type="module" src="tetrominoes.js"></script>
     <script type="module" src="index.js"></script>
+    <script type="module" src="game.js"></script>
 
     <title>Tetris</title>
   </head>
@@ -40,18 +41,23 @@
         <canvas id="board" class="gameBoard"></canvas>
         <div class="gameStats">
           <h2>TETRIS</h2>
-          <canvas id="next" class="next"></canvas>
+          <div class="nextBlock" id="nextBlock">
+            <p>Next: </p>
+            <canvas id="next" class="next">
+          </div>
+            
+          </canvas>
 
           <div class="stats">
             <p>Score: <span id="score">0</span></p>
             <p>Lines: <span id="lines">0</span></p>
-            <p>Level: <span id="level">0</span></p>
+            <p>Level: <span id="level">1</span></p>
 
             <p>Game Mode: <span id="gameMode"></span></p>
             <p>Player Mode: <span id="playerMode"></span></p>
-            <p>Group No: <span id="groupNo">21</span></p>
+            <p>Group No: <span id="groupNo">25</span></p>
           </div>
-          <button class="btn playBtn">Play</button>
+          <button class="btn playBtn" onclick="play()">Start</button>
         </div>
       </div>
 
@@ -60,6 +66,17 @@
         <div class="buttons">
           <button class="btn confirm" id="confirmBtn">Yes</button>
           <button class="btn cancel" id="cancelBtn">No</button>
+        </div>
+      </div>
+
+      <div class="overlay pause" id="pause">
+        <div class="content">
+          <h3>PAUSED... Press P to Resume Game</h3>
+        </div>
+      </div>
+      <div class="overlay lostGame" id="lost">
+        <div class="content">
+          <h3>YOU LOST THE GAME!!</h3>
         </div>
       </div>
     </div>
@@ -113,8 +130,8 @@
               id="gameModeOption"
               name="gameModeOption"
             >
-              <option class="dropDown" value="normal">Normal</option>
-              <option class="dropDown" value="extended">Extended</option>
+              <option class="dropDown" value="NORMAL">Normal</option>
+              <option class="dropDown" value="EXTENDED">Extended</option>
             </select>
           </td>
         </tr>
@@ -126,8 +143,8 @@
               id="playerModeOption"
               name="playerModeOption"
             >
-              <option class="dropDown" value="player">Player</option>
-              <option class="dropDown" value="ai">AI</option>
+              <option class="dropDown" value="PLAYER">Player</option>
+              <option class="dropDown" value="AI">AI</option>
             </select>
           </td>
         </tr>
