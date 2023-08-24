@@ -2,7 +2,7 @@ import * as config from "./gameItems.js";
 import { Board } from "./board.js";
 import { Tetromino } from "./tetrominoes.js";
 
-export default class Game {
+export class Game {
   constructor() {
     this.newGame();
   }
@@ -21,6 +21,13 @@ export default class Game {
     this.full = false;
     this.currentBlock = this.getBlock(this.width);
     this.nextBlock = this.getBlock(this.width);
+  }
+
+  newNextBlockCanvas() {
+    const nextCanvas = document.getElementById("next");
+    const nextCtx = nextCanvas.getContext("2d");
+    // Clear the canvas
+    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   }
 
   getUserSettings() {
@@ -45,27 +52,25 @@ export default class Game {
 
     ctx.canvas.width = width * config.BLOCK_SIZE;
     ctx.canvas.height = height * config.BLOCK_SIZE;
-    ctx.scale(config.BLOCK_SIZE, config.BLOCK_SIZE);
+    // ctx.scale(config.BLOCK_SIZE, config.BLOCK_SIZE);
 
     let gameBoard = new Board(ctx, width, height);
-
     return gameBoard;
   }
 
   getBlock(width) {
     const index = Math.floor(Math.random() * 7);
     let block = new Tetromino(index, width);
+    return block;
   }
 
-  get gameLevel() {
+  gameLevel() {
     return Math.floor(this.lines * 0.1);
   }
 
-  // returns current game conditions and variables
-  // keep an eye on this
   currentGameState() {
-    const gameBoardState = this.getGameBoard();
-
+    const gameBoardState = this.getGameBoard(this.width, this.height);
+    // coords of top left corner
     const { x: pieceX, y: pieceY } = this.currentBlock;
     let blocks = this.currentBlock.shape;
 
@@ -81,7 +86,19 @@ export default class Game {
     for (let y = 0; y < blocks.length; y++) {
       for (let x = 0; x < blocks[y].length; x++) {
         if (blocks[y][x]) {
-          gameBoardState.grid[pieceY + y][pieceX + x] = blocks[y][x];
+          const targetY = pieceY + y;
+          const targetX = pieceX + x;
+
+          // Check if the target position is within bounds and not occupied
+          if (
+            targetY >= 0 &&
+            targetY < this.height &&
+            targetX >= 0 &&
+            targetX < this.width &&
+            gameBoardState.grid[targetY][targetX] === 0
+          ) {
+            gameBoardState.grid[targetY][targetX] = blocks[y][x];
+          }
         }
       }
     }
@@ -104,39 +121,36 @@ export default class Game {
   }
 
   updatePieces() {
-    this.currentPiece = this.nextBlock;
+    this.currentBlock = this.nextBlock;
     this.nextBlock = this.getBlock(this.width);
   }
 
-  // Logic for moving pieces
-  movePieceLeft() {
-    this.currentPiece.x -= 1;
+  moveBlockLeft() {
+    this.currentBlock.x -= 1;
 
     if (this.hasCollision()) {
-      this.currentPiece.x += 1;
+      this.currentBlock.x += 1;
     }
   }
 
-  movePieceRight() {
-    this.currentPiece.x += 1;
+  moveBlockRight() {
+    this.currentBlock.x += 1;
 
     if (this.hasCollision()) {
-      this.currentPiece.x -= 1;
+      this.currentBlock.x -= 1;
     }
   }
 
-  movePieceDown() {
+  moveBlockDown() {
     if (this.full) {
       return;
     }
 
-    this.currentPiece.y += 1;
+    this.currentBlock.y += 1;
 
     if (this.hasCollision()) {
-      this.currentPiece.y -= 1;
-      this.lockPiece();
-      const linesCleared = this.clearLines();
-      this.updateScore(linesCleared);
+      this.currentBlock.y -= 1;
+      this.freezeBlock();
       this.updatePieces();
     }
 
@@ -145,7 +159,7 @@ export default class Game {
     }
   }
 
-  rotatePiece() {
+  rotateBlock() {
     this.rotateBlocks();
 
     if (this.hasCollision()) {
@@ -154,7 +168,7 @@ export default class Game {
   }
 
   rotateBlocks(clockwise = true) {
-    const blocks = this.currentPiece.blocks;
+    const blocks = this.currentBlock.shape;
     const length = blocks.length;
     const x = Math.floor(length / 2);
     const y = length - 1;
@@ -181,7 +195,6 @@ export default class Game {
   hasCollision() {
     const { x: pieceX, y: pieceY } = this.currentBlock;
     let blocks = this.currentBlock.shape;
-
     for (let y = 0; y < blocks.length; y++) {
       for (let x = 0; x < blocks[y].length; x++) {
         if (
@@ -197,7 +210,7 @@ export default class Game {
     return false;
   }
 
-  lockPiece() {
+  freezeBlock() {
     const { x: pieceX, y: pieceY } = this.currentBlock;
     let blocks = this.currentBlock.shape;
 
@@ -208,36 +221,5 @@ export default class Game {
         }
       }
     }
-  }
-
-  clearLines() {
-    const rows = this.height;
-    const cols = this.width;
-    let lines = [];
-
-    for (let y = rows - 1; y >= 0; y--) {
-      let numberOfBlocks = 0;
-
-      for (let x = 0; x < cols; x++) {
-        if (this.playfield[y][x]) {
-          numberOfBlocks += 1;
-        }
-      }
-
-      if (numberOfBlocks === 0) {
-        break;
-      } else if (numberOfBlocks < cols) {
-        continue;
-      } else if (numberOfBlocks === cols) {
-        lines.unshift(y);
-      }
-    }
-
-    for (let index of lines) {
-      this.gameBoard.grid.splice(index, 1);
-      this.gameBoard.grid.unshift(new Array(cols).fill(0));
-    }
-
-    return lines.length;
   }
 }
