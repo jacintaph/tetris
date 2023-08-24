@@ -1,2 +1,2 @@
-# tetris
+# Tetris
 Tetris web application

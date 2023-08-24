@@ -4,6 +4,13 @@
   font-family: "Press Start 2P", cursive;
 }
 
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 h1 {
   font-family: "Press Start 2P", cursive;
   font-size: 5rem;
@@ -27,7 +34,8 @@ button {
 }
 
 .container {
-  background-color: #f1f1f8;
+  background-color: #ddecff;
+  /* background-color: #f1f1f8; */
 }
 
 .startScreen {
@@ -43,13 +51,6 @@ button {
   align-items: center;
 }
 
-.gameScreen {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .options {
   display: flex;
 }
@@ -62,7 +63,8 @@ button {
 
 /* ---- DIALOG BOX ---- */
 .dialogBox {
-  display: inline-block;
+  display: flex;
+  width: 500px;
   padding: 20px;
   flex-direction: column;
   justify-content: center;
@@ -92,7 +94,7 @@ button {
   background-color: wheat;
   border-radius: 4px;
   box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,
-    rgba(45, 35, 66, 0.3) 0 7px 13px -3px, wheat 0 -3px 0 inset;
+    rgba(45, 35, 66, 0.3) 0 7px 13px -3px;
   color: #36395a;
   cursor: pointer;
   display: inline-flex;
@@ -109,7 +111,7 @@ button {
 
 .btn:hover {
   box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px,
-    rgba(45, 35, 66, 0.3) 0 7px 13px -3px, wheat 0 -3px 0 inset;
+    rgba(45, 35, 66, 0.3) 0 7px 13px -3px;
   transform: translateY(-2px);
 }
 
@@ -227,4 +229,50 @@ td {
   font-family: "JetBrains Mono", monospace;
   color: black;
   font-size: 20px;
+}
+
+/* ------ GAME SCREEN ------- */
+.gameScreen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ddecff;
+}
+
+.gameGrid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gameStats {
+  display: flex;
+  flex-direction: column;
+  background-color: #ddecff;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  /* text-align: left; */
+}
+
+.stats {
+  width: 100%;
+  align-items: left;
+}
+
+.next {
+  background-color: #d4e3f7;
+  border: #7286a1 solid 5px;
+}
+
+.gameBoard {
+  border: #7286a1 solid 5px;
+  margin-right: 50px;
+  background-color: #bacdeb;
+}
+
+.playBtn {
+  background-color: #00f707;
+  font-size: 24px;
 }
