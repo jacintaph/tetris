@@ -26,6 +26,7 @@ export class Game {
   newNextBlockCanvas() {
     const nextCanvas = document.getElementById("next");
     const nextCtx = nextCanvas.getContext("2d");
+
     // Clear the canvas
     nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   }
@@ -52,7 +53,6 @@ export class Game {
 
     ctx.canvas.width = width * config.BLOCK_SIZE;
     ctx.canvas.height = height * config.BLOCK_SIZE;
-    // ctx.scale(config.BLOCK_SIZE, config.BLOCK_SIZE);
 
     let gameBoard = new Board(ctx, width, height);
     return gameBoard;
@@ -72,7 +72,7 @@ export class Game {
     const gameBoardState = this.getGameBoard(this.width, this.height);
     // coords of top left corner
     const { x: pieceX, y: pieceY } = this.currentBlock;
-    let blocks = this.currentBlock.shape;
+    let blocks = this.currentBlock.obj.shape;
 
     for (let y = 0; y < this.gameBoard.grid.length; y++) {
       // board height
@@ -121,13 +121,16 @@ export class Game {
   }
 
   updatePieces() {
+    console.log("Next Block: ", this.nextBlock);
     this.currentBlock = this.nextBlock;
+    console.log("Current Block: ", this.currentBlock);
     this.nextBlock = this.getBlock(this.width);
   }
 
   moveBlockLeft() {
     this.currentBlock.x -= 1;
-
+    console.log(this.currentBlock);
+    console.log(this.nextBlock);
     if (this.hasCollision()) {
       this.currentBlock.x += 1;
     }
@@ -145,17 +148,22 @@ export class Game {
     if (this.full) {
       return;
     }
-
     this.currentBlock.y += 1;
 
+    // console.log(this.currentBlock)
+    // console.log(this.nextBlock)
     if (this.hasCollision()) {
+      console.log("!st has collision");
       this.currentBlock.y -= 1;
       this.freezeBlock();
       this.updatePieces();
     }
 
+    // If collision before dropping = board is full
     if (this.hasCollision()) {
+      console.log("full hit");
       this.full = true;
+      return;
     }
   }
 
@@ -165,10 +173,14 @@ export class Game {
     if (this.hasCollision()) {
       this.rotateBlocks(false);
     }
+    console.log(this.currentBlock);
+    console.log(this.nextBlock);
   }
 
   rotateBlocks(clockwise = true) {
-    const blocks = this.currentBlock.shape;
+    let block = this.currentBlock.obj;
+    let blocks = block.shape;
+    console.log(blocks);
     const length = blocks.length;
     const x = Math.floor(length / 2);
     const y = length - 1;
@@ -192,11 +204,39 @@ export class Game {
     }
   }
 
+  /*   rotateBlocks(clockwise = true) {
+    const block = this.currentBlock;
+    const blocks = block.shape;
+    const length = blocks.length;
+    const x = Math.floor(length / 2);
+    const y = length - 1;
+
+    for (let i = 0; i < x; i++) {
+      for (let j = i; j < y - i; j++) {
+        const temp = blocks[i][j];
+
+        if (clockwise) {
+          blocks[i][j] = blocks[y - j][i];
+          blocks[y - j][i] = blocks[y - i][y - j];
+          blocks[y - i][y - j] = blocks[j][y - i];
+          blocks[j][y - i] = temp;
+        } else {
+          blocks[i][j] = blocks[j][y - i];
+          blocks[j][y - i] = blocks[y - i][y - j];
+          blocks[y - i][y - j] = blocks[y - j][i];
+          blocks[y - j][i] = temp;
+        }
+      }
+    }
+  } */
+
   hasCollision() {
     const { x: pieceX, y: pieceY } = this.currentBlock;
-    let blocks = this.currentBlock.shape;
+    // console.log("pieceX: ", pieceX, " pieceY: ", pieceY);
+    let blocks = this.currentBlock.obj.shape;
     for (let y = 0; y < blocks.length; y++) {
       for (let x = 0; x < blocks[y].length; x++) {
+        // console.log(blocks[y][x]);
         if (
           blocks[y][x] &&
           (this.gameBoard.grid[pieceY + y] === undefined ||
@@ -212,7 +252,7 @@ export class Game {
 
   freezeBlock() {
     const { x: pieceX, y: pieceY } = this.currentBlock;
-    let blocks = this.currentBlock.shape;
+    let blocks = this.currentBlock.obj.shape;
 
     for (let y = 0; y < blocks.length; y++) {
       for (let x = 0; x < blocks[y].length; x++) {

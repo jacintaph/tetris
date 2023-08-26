@@ -187,7 +187,7 @@ function updateInputValue(elementName, valueRef) {
     inputValues[valueRef] = elementName.value;
     updateDisplayValues();
 
-    updateCanvasSize();
+    // updateCanvasSize();
   });
 }
 
@@ -208,14 +208,14 @@ updateInputValue(playerMode, "playerModeValue");
 
 updateDisplayValues();
 
-function updateCanvasSize() {
-  // Update canvas sizing
-  ctx.canvas.width = inputValues.widthValue * config.BLOCK_SIZE;
-  ctx.canvas.height = inputValues.heightValue * config.BLOCK_SIZE;
+// function updateCanvasSize() {
+//   // Update canvas sizing
+//   ctx.canvas.width = inputValues.widthValue * config.BLOCK_SIZE;
+//   ctx.canvas.height = inputValues.heightValue * config.BLOCK_SIZE;
 
-  // Scale blocks
-  ctx.scale(config.BLOCK_SIZE, config.BLOCK_SIZE);
-}
+//   // Scale blocks
+//   ctx.scale(config.BLOCK_SIZE, config.BLOCK_SIZE);
+// }
 
 window.play = play;
 const width = inputValues.widthValue;

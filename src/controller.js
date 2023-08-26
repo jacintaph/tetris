@@ -7,7 +7,7 @@ export class Controller {
     this.intervalId = null;
 
     document.addEventListener("keydown", this.processKeyDown.bind(this));
-    document.addEventListener("keyup", this.processKeyUp.bind(this));
+    // document.addEventListener("keyup", this.processKeyUp.bind(this));
   }
 
   processKeyDown(event) {
@@ -47,20 +47,20 @@ export class Controller {
         this.updateView();
         break;
       case 40: // down
-        this.stopTimer();
+        // this.stopTimer();
         this.game.moveBlockDown();
         this.updateView();
         break;
     }
   }
 
-  processKeyUp(event) {
-    switch (event.keyCode) {
-      case 40: // DOWN ARROW
-        this.startTimer();
-        break;
-    }
-  }
+  // processKeyUp(event) {
+  //   switch (event.keyCode) {
+  //     case 40: // DOWN ARROW
+  //       // this.startTimer();
+  //       break;
+  //   }
+  
 
   startTimer() {
     const speed = 1000 - this.game.currentGameState().gameLevel * 100;
@@ -90,7 +90,7 @@ export class Controller {
   }
 
   update() {
-    this.game.movePieceDown();
+    this.game.moveBlockDown();
     this.updateView();
   }
 
