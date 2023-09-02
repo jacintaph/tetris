@@ -22,6 +22,18 @@ const exitBtn = document.getElementById("exitBtn");
 const configCloseBtn = document.getElementById("configCloseBtn");
 const scoresCloseBtn = document.getElementById("scoresCloseBtn");
 
+function startGame() {
+  gameLoop.start();
+}
+
+function configuration() {
+  gameLoop.config();
+}
+
+function highScores() {
+  gameLoop.highScores();
+}
+
 function exitApp() {
   const shouldExit = confirm("Are you sure you want to exit?");
 
@@ -45,9 +57,9 @@ function closeScreen() {
   gameLoop.startScreen();
 }
 
-playBtn.addEventListener("click", gameLoop.start());
-configBtn.addEventListener("click", gameLoop.config);
-scoresBtn.addEventListener("click", gameLoop.highScores);
+playBtn.addEventListener("click", startGame);
+configBtn.addEventListener("click", configuration);
+scoresBtn.addEventListener("click", highScores);
 
 exitBtn.addEventListener("click", exitApp);
 configCloseBtn.addEventListener("click", closeScreen);
