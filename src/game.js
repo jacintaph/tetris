@@ -8,16 +8,9 @@ export class Game {
   }
 
   newGame() {
-    const { width, height, gameLevel, gameMode, playerMode } =
-      this.getUserSettings();
-    this.width = width;
-    this.height = height;
-    this.gameBoard = this.getGameBoard(width, height);
+    this.updateGameSettings();
     this.score = 0;
     this.lines = 0;
-    this.gameLevel = gameLevel;
-    this.gameMode = gameMode;
-    this.playerMode = playerMode;
     this.full = false;
     this.currentBlock = this.getBlock(this.width);
     this.nextBlock = this.getBlock(this.width);
@@ -45,6 +38,22 @@ export class Game {
       gameMode: gameMode.value,
       playerMode: playerMode.value,
     };
+  }
+
+  updateGameSettings() {
+    const { width, height, gameLevel, gameMode, playerMode } =
+      this.getUserSettings();
+    this.width = width;
+    this.height = height;
+    this.gameBoard = this.getGameBoard(width, height);
+    this.gameLevel = gameLevel;
+    this.gameMode = gameMode;
+    this.playerMode = playerMode;
+
+    // Render initial Config settings
+    document.getElementById("level").textContent = this.gameLevel;
+    document.getElementById("playerMode").textContent = this.playerMode;
+    document.getElementById("gameMode").textContent = this.gameMode;
   }
 
   getGameBoard(width, height) {
@@ -113,24 +122,22 @@ export class Game {
     };
   }
 
-  updateScore(linesCleared) {
+  updateStats(linesCleared) {
     if (linesCleared > 0) {
-      this.score += config.pointSystem[linesCleared] * (this.level + 1);
+      this.score += config.pointSystem[linesCleared];
       this.lines += linesCleared;
+      this.gameLevel = Math.floor(this.lines / 10) + 1;
     }
   }
 
   updatePieces() {
-    console.log("Next Block: ", this.nextBlock);
     this.currentBlock = this.nextBlock;
-    console.log("Current Block: ", this.currentBlock);
     this.nextBlock = this.getBlock(this.width);
   }
 
   moveBlockLeft() {
     this.currentBlock.x -= 1;
-    console.log(this.currentBlock);
-    console.log(this.nextBlock);
+
     if (this.hasCollision()) {
       this.currentBlock.x += 1;
     }
@@ -150,20 +157,37 @@ export class Game {
     }
     this.currentBlock.y += 1;
 
-    // console.log(this.currentBlock)
-    // console.log(this.nextBlock)
     if (this.hasCollision()) {
-      console.log("!st has collision");
+      // Check for and Clear any full rows
       this.currentBlock.y -= 1;
       this.freezeBlock();
+      this.clearFullRows();
       this.updatePieces();
     }
 
-    // If collision before dropping = board is full
+    // Collision straight away = full board
     if (this.hasCollision()) {
-      console.log("full hit");
       this.full = true;
       return;
+    }
+  }
+
+  clearFullRows() {
+    const grid = this.gameBoard.grid;
+    let numRowsCleared = 0;
+
+    for (let y = grid.length - 1; y >= 0; y--) {
+      if (grid[y].every((cell) => cell !== 0)) {
+        // This row is full
+        grid.splice(y, 1); // Remove the full row
+        grid.unshift(Array.from({ length: this.width }, () => 0));
+        numRowsCleared++;
+        y++; // Recheck the same row since it has shifted down
+      }
+    }
+
+    if (numRowsCleared > 0) {
+      this.updateStats(numRowsCleared);
     }
   }
 
@@ -173,14 +197,11 @@ export class Game {
     if (this.hasCollision()) {
       this.rotateBlocks(false);
     }
-    console.log(this.currentBlock);
-    console.log(this.nextBlock);
   }
 
   rotateBlocks(clockwise = true) {
     let block = this.currentBlock.obj;
     let blocks = block.shape;
-    console.log(blocks);
     const length = blocks.length;
     const x = Math.floor(length / 2);
     const y = length - 1;
@@ -204,39 +225,11 @@ export class Game {
     }
   }
 
-  /*   rotateBlocks(clockwise = true) {
-    const block = this.currentBlock;
-    const blocks = block.shape;
-    const length = blocks.length;
-    const x = Math.floor(length / 2);
-    const y = length - 1;
-
-    for (let i = 0; i < x; i++) {
-      for (let j = i; j < y - i; j++) {
-        const temp = blocks[i][j];
-
-        if (clockwise) {
-          blocks[i][j] = blocks[y - j][i];
-          blocks[y - j][i] = blocks[y - i][y - j];
-          blocks[y - i][y - j] = blocks[j][y - i];
-          blocks[j][y - i] = temp;
-        } else {
-          blocks[i][j] = blocks[j][y - i];
-          blocks[j][y - i] = blocks[y - i][y - j];
-          blocks[y - i][y - j] = blocks[y - j][i];
-          blocks[y - j][i] = temp;
-        }
-      }
-    }
-  } */
-
   hasCollision() {
     const { x: pieceX, y: pieceY } = this.currentBlock;
-    // console.log("pieceX: ", pieceX, " pieceY: ", pieceY);
     let blocks = this.currentBlock.obj.shape;
     for (let y = 0; y < blocks.length; y++) {
       for (let x = 0; x < blocks[y].length; x++) {
-        // console.log(blocks[y][x]);
         if (
           blocks[y][x] &&
           (this.gameBoard.grid[pieceY + y] === undefined ||
