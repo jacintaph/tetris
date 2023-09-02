@@ -140,7 +140,7 @@ export class GameLoopView {
     highScores.sort((a, b) => b.score - a.score);
 
     // Iterate through the top 10 high scores or the available number of high scores
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < highScores.length; i++) {
       const rowId = `row_${i + 1}`;
       const row = document.getElementById(rowId);
       row.innerHTML = "";
