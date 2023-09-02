@@ -1,11 +1,12 @@
 import * as config from "./gameItems/variables.js";
-
 export class GameLoopView {
   constructor(game) {
     this.fps = 60;
     this.cnv = null;
     this.loop = null;
     this.game = game;
+    this.renderStats;
+    this.saveScoreBox = document.getElementById("highScoreInput");
   }
 
   startScreen() {
@@ -24,6 +25,7 @@ export class GameLoopView {
   }
 
   highScores() {
+    this.renderHighScores();
     this.toggleScreen("startScreen", false);
     this.toggleScreen("highscores", true);
   }
@@ -81,6 +83,12 @@ export class GameLoopView {
     }
   }
 
+  renderStats(state) {
+    document.getElementById("score").textContent = state.score;
+    document.getElementById("lines").textContent = state.lines;
+    document.getElementById("level").textContent = state.gameLevel;
+  }
+
   renderPlayfield({ gameBoardState }) {
     const canvasWidth = gameBoardState.ctx.canvas.width;
     const canvasHeight = gameBoardState.ctx.canvas.height;
@@ -114,10 +122,47 @@ export class GameLoopView {
     this.clearScreen(state);
     this.renderPlayfield(state);
     this.renderNextBlock(state);
+    this.renderStats(state);
   }
 
-  renderLostScreen(state) {
+  renderLostScreen() {
     const lostOverlay = document.getElementById("lost");
     lostOverlay.classList.toggle("active");
+  }
+
+  renderHighScores() {
+    const highScoresTableBody = document.getElementById("scoreBody");
+    // Get highScores data from local storage if exists, otherwise empty array
+    const highScores =
+      JSON.parse(localStorage.getItem(config.HIGH_SCORES)) ?? [];
+
+    // Sort the high scores in descending order
+    highScores.sort((a, b) => b.score - a.score);
+
+    // Iterate through the top 10 high scores or the available number of high scores
+    for (let i = 0; i < 10; i++) {
+      const rowId = `row_${i + 1}`;
+      const row = document.getElementById(rowId);
+      row.innerHTML = "";
+      row.innerHTML = `
+        <td>${i + 1}</td>
+        <td>${highScores[i].username}</td>
+        <td>${highScores[i].userScore}</td>
+      `;
+    }
+
+    const numToShow = Math.min(highScores.length, 10);
+    for (let i = 0; i < numToShow; i++) {
+      const rowId = `row_${i + 1}`;
+      const row = document.getElementById(rowId);
+
+      // Get the cells in the row
+      const cells = row.getElementsByTagName("td");
+
+      // Update the content of the cells
+      cells[0].value = i + 1; // Rank starts from 1
+      cells[1].value = highScores[i].name; // Assuming you have a "name" property
+      cells[2].value = highScores[i].score;
+    }
   }
 }
