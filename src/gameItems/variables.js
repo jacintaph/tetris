@@ -1,5 +1,6 @@
 // Defines the constant variables in the Tetris game
-
+export const HIGH_SCORES = "highScores";
+export const TOTAL = 10;
 // Define all tetromino types
 export const blocks = {
   0: {
@@ -8,7 +9,7 @@ export const blocks = {
       [0, 0, 0, 0],
       [1, 1, 1, 1],
       [0, 0, 0, 0],
-      [0, 0, 0, 0]
+      [0, 0, 0, 0],
     ],
     colour: "lightBlue",
   },
@@ -17,7 +18,7 @@ export const blocks = {
     shape: [
       [0, 0, 0],
       [2, 0, 0],
-      [2, 2, 2]
+      [2, 2, 2],
     ],
     colour: "blue",
   },
@@ -26,7 +27,7 @@ export const blocks = {
     shape: [
       [0, 0, 0],
       [0, 0, 3],
-      [3, 3, 3]
+      [3, 3, 3],
     ],
     colour: "orange",
   },
@@ -36,7 +37,7 @@ export const blocks = {
       [0, 0, 0, 0],
       [0, 4, 4, 0],
       [0, 4, 4, 0],
-      [0, 0, 0, 0]
+      [0, 0, 0, 0],
     ],
     colour: "yellow",
   },
@@ -45,7 +46,7 @@ export const blocks = {
     shape: [
       [0, 0, 0],
       [0, 5, 5],
-      [5, 5, 0]
+      [5, 5, 0],
     ],
     colour: "green",
   },
@@ -54,7 +55,7 @@ export const blocks = {
     shape: [
       [0, 0, 0],
       [0, 6, 0],
-      [6, 6, 6]
+      [6, 6, 6],
     ],
     colour: "purple",
   },
@@ -63,7 +64,7 @@ export const blocks = {
     shape: [
       [0, 0, 0],
       [7, 7, 0],
-      [0, 7, 7]
+      [0, 7, 7],
     ],
     colour: "red",
   },
@@ -72,7 +73,7 @@ export const blocks = {
     shape: [
       [0, 0, 0],
       [8, 8, 8],
-      [0, 0, 0]
+      [0, 0, 0],
     ],
     colour: "lightBlue",
   },
@@ -80,7 +81,7 @@ export const blocks = {
     type: "LTwo",
     shape: [
       [9, 0],
-      [9, 9]
+      [9, 9],
     ],
     colour: "blue",
   },
