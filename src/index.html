@@ -69,6 +69,27 @@
         </div>
       </div>
 
+      <div class="highScoreInputBox hidden" id="highScoreInput">
+        <div class="content">
+          <h2>Congratulations!</h2>
+          <p>You've achieved a high score!</p>
+          <p>Enter you name below to save it to the leaderboard.</p>
+          <input
+            class="username"
+            id="username"
+            type="text"
+            name="username"
+            placeholder="Username"
+            required>
+            <p class="usernameRequired hidden" id="usernameRequired">Username is Required!</p>
+        </div>
+
+        <div class="buttons">
+          <button class="btn confirm" id="saveConfirmBtn">Save</button>
+          <button class="btn cancel" id="saveCancelBtn">Cancel</button>
+        </div>
+      </div>
+
       <div class="overlay pause" id="pause">
         <div class="content">
           <h3>PAUSED... Press P to Resume Game</h3>
@@ -149,7 +170,7 @@
           </td>
         </tr>
       </table>
-      <button class="closeBtn btn exit" id="closeBtn">Close</button>
+      <button class="closeBtn btn exit configClose" id="configCloseBtn">Close</button>
     </div>
 
     <div class="scoreScreen hidden" id="highscores">
@@ -160,9 +181,20 @@
           <th>Name</th>
           <th>Score</th>
         </tr>
-        <tbody class="scoreBody" id="scoreBody"></tbody>
+        <tbody class="scoreBody" id="scoreBody">
+          <tr id="row_1"><td>1</td></tr>
+          <tr id="row_2"><td>2</td></tr>
+          <tr id="row_3"><td>3</td></tr>
+          <tr id="row_4"><td>4</td></tr>
+          <tr id="row_5"><td>5</td></tr>
+          <tr id="row_6"><td>6</td></tr>
+          <tr id="row_7"><td>7</td></tr>
+          <tr id="row_8"><td>8</td></tr>
+          <tr id="row_9"><td>9</td></tr>
+          <tr id="row_10"><td>10</td></tr>
+        </tbody>
       </table>
-      <button class="closeBtn btn exit" id="closeBtn">Close</button>
+      <button class="closeBtn btn exit" id="scoresCloseBtn">Close</button>
     </div>
   </body>
 </html>
