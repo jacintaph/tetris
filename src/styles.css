@@ -81,6 +81,24 @@ button {
   background-color: #36395a;
 }
 
+.highScoreInputBox {
+  display: flex;
+  /* width: 500px; */
+  padding: 20px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid #40e1d1 2px;
+  border-radius: 2%;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,
+    rgba(45, 35, 66, 0.3) 0 7px 13px -3px, rgba(45, 35, 66, 0.4) 0 -3px 0 inset;
+  background-color: #36395a;
+}
+
+.usernameRequired {
+  color: red;
+}
+
 .content {
   font-family: "JetBrains Mono", monospace;
   color: #40e1d1;
@@ -258,7 +276,6 @@ td {
   align-items: center;
 }
 
-
 .gameGrid {
   display: flex;
   align-items: center;
@@ -316,7 +333,6 @@ td {
   transform: translate(-50%, -50%);
   color: white;
   text-align: center;
-
 }
 
 #pause.overlay.active {
@@ -342,7 +358,6 @@ td {
   transform: translate(-50%, -50%);
   color: white;
   text-align: center;
-
 }
 
 #lost.overlay.active {
