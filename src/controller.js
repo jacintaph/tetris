@@ -18,15 +18,16 @@ export class Controller {
     this.highScores;
 
     this.setEventListeners();
-
-    document.addEventListener("keydown", this.processKeyDown.bind(this));
-    this.configCloseBtn = document.getElementById("configCloseBtn");
-    this.configCloseBtn.addEventListener("click", function () {
-      game.updateGameSettings();
-    });
   }
 
   setEventListeners() {
+    document.addEventListener("keydown", this.processKeyDown.bind(this));
+
+    this.configCloseBtn = document.getElementById("configCloseBtn");
+    this.configCloseBtn.addEventListener("click", () => {
+      this.game.updateGameSettings();
+    });
+
     this.confirmBtn.addEventListener("click", () => {
       this.exitGame();
     });
@@ -228,7 +229,6 @@ export class Controller {
 
   saveHighScore(username, userScore, highScores) {
     const newScore = { userScore, username };
-    console.log(newScore, highScores);
     // Add to list and sort
     highScores.push(newScore);
     highScores.sort((a, b) => b.userScore - a.userScore);
