@@ -2,9 +2,48 @@ import * as config from "./gameItems/variables.js";
 import { Board } from "./gameItems/board.js";
 import { Tetromino } from "./gameItems/tetrominoes.js";
 
+class Canvas {
+  constructor(width, height, id) {
+    this.canvas = document.getElementById(id);
+    this.ctx = this.canvas.getContext("2d");
+    this.width = width;
+    this.height = height;
+  }
+
+  clear() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+  }
+}
+
+class MainBoard extends Canvas {
+  constructor(width, height) {
+    super(width, height, "board");
+    this.setDimensions();
+  }
+
+  setDimensions() {
+    this.ctx.canvas.width = this.width * config.BLOCK_SIZE;
+    this.ctx.canvas.height = this.height * config.BLOCK_SIZE;
+  }
+
+  getBoard() {
+    let gameBoard = new Board(this.ctx, this.width, this.height);
+    return gameBoard;
+  }
+}
+
+class NextBlockCanvas extends Canvas {
+  constructor() {
+    super(0, 0, "next");
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+  }
+}
+
 export class Game {
   constructor() {
     this.newGame();
+    this.nextBlockCanvas = new NextBlockCanvas();
   }
 
   newGame() {
@@ -16,14 +55,6 @@ export class Game {
     this.nextBlock = this.getBlock(this.width);
   }
 
-  newNextBlockCanvas() {
-    const nextCanvas = document.getElementById("next");
-    const nextCtx = nextCanvas.getContext("2d");
-
-    // Clear the canvas
-    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-  }
-
   getUserSettings() {
     // Get the user-selected game level value from the input element / or auto default value
     const widthInput = document.getElementById("width");
@@ -31,6 +62,7 @@ export class Game {
     const gameLevelInput = document.getElementById("gameLevel");
     const gameMode = document.getElementById("gameModeOption");
     const playerMode = document.getElementById("playerModeOption");
+
     return {
       width: widthInput.value,
       height: heightInput.value,
@@ -45,7 +77,8 @@ export class Game {
       this.getUserSettings();
     this.width = width;
     this.height = height;
-    this.gameBoard = this.getGameBoard(width, height);
+    this.mainBoard = new MainBoard(this.width, this.height);
+    this.gameBoard = this.mainBoard.getBoard();
     this.gameLevel = gameLevel;
     this.gameMode = gameMode;
     this.playerMode = playerMode;
@@ -54,17 +87,6 @@ export class Game {
     document.getElementById("level").textContent = this.gameLevel;
     document.getElementById("playerMode").textContent = this.playerMode;
     document.getElementById("gameMode").textContent = this.gameMode;
-  }
-
-  getGameBoard(width, height) {
-    let canvas = document.getElementById("board");
-    let ctx = canvas.getContext("2d");
-
-    ctx.canvas.width = width * config.BLOCK_SIZE;
-    ctx.canvas.height = height * config.BLOCK_SIZE;
-
-    let gameBoard = new Board(ctx, width, height);
-    return gameBoard;
   }
 
   getBlock(width) {
@@ -78,7 +100,7 @@ export class Game {
   }
 
   currentGameState() {
-    const gameBoardState = this.getGameBoard(this.width, this.height);
+    const gameBoardState = this.mainBoard.getBoard();
     // coords of top left corner
     const { x: pieceX, y: pieceY } = this.currentBlock;
     let blocks = this.currentBlock.obj.shape;
@@ -255,13 +277,4 @@ export class Game {
       }
     }
   }
-}
-
-
-export class Canvas {
-
-}
-
-export class MainBoard extends Canvas {
-  
 }
