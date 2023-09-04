@@ -11,7 +11,7 @@ export class Game {
     this.updateGameSettings();
     this.score = 0;
     this.lines = 0;
-    this.full = false;
+    this.boardFull = false;
     this.currentBlock = this.getBlock(this.width);
     this.nextBlock = this.getBlock(this.width);
   }
@@ -118,7 +118,7 @@ export class Game {
       lines: this.lines,
       gameLevel: this.gameLevel,
       nextBlock: this.nextBlock,
-      complete: this.full,
+      complete: this.boardFull,
     };
   }
 
@@ -152,7 +152,7 @@ export class Game {
   }
 
   moveBlockDown() {
-    if (this.full) {
+    if (this.boardFull) {
       return;
     }
     this.currentBlock.y += 1;
@@ -167,7 +167,7 @@ export class Game {
 
     // Collision straight away = full board
     if (this.hasCollision()) {
-      this.full = true;
+      this.boardFull = true;
       return;
     }
   }
@@ -255,4 +255,13 @@ export class Game {
       }
     }
   }
+}
+
+
+export class Canvas {
+
+}
+
+export class MainBoard extends Canvas {
+  
 }

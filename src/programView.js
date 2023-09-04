@@ -1,12 +1,12 @@
 import * as config from "./gameItems/variables.js";
 export class GameLoopView {
   constructor(game) {
-    this.fps = 60;
-    this.cnv = null;
-    this.loop = null;
-    this.game = game;
-    this.renderStats;
-    this.saveScoreBox = document.getElementById("highScoreInput");
+    // this.fps = 60;
+    // this.cnv = null;
+    // this.loop = null;
+    // this.game = game;
+    // this.renderStats;
+    // this.saveScoreBox = document.getElementById("highScoreInput");
   }
 
   startScreen() {
@@ -131,7 +131,6 @@ export class GameLoopView {
   }
 
   renderHighScores() {
-    const highScoresTableBody = document.getElementById("scoreBody");
     // Get highScores data from local storage if exists, otherwise empty array
     const highScores =
       JSON.parse(localStorage.getItem(config.HIGH_SCORES)) ?? [];
@@ -152,6 +151,7 @@ export class GameLoopView {
     }
 
     const numToShow = Math.min(highScores.length, 10);
+
     for (let i = 0; i < numToShow; i++) {
       const rowId = `row_${i + 1}`;
       const row = document.getElementById(rowId);

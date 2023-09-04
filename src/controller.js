@@ -6,6 +6,11 @@ export class Controller {
     this.playing = false;
     this.paused = false;
     this.intervalId = null;
+
+    this.setEventListeners();
+  }
+
+  setEventListeners() {
     this.gameScreen = document.getElementById("gameScreen");
     this.confirmBtn = document.getElementById("confirmBtn");
     this.cancelBtn = document.getElementById("cancelBtn");
@@ -17,10 +22,6 @@ export class Controller {
     this.userScore;
     this.highScores;
 
-    this.setEventListeners();
-  }
-
-  setEventListeners() {
     document.addEventListener("keydown", this.processKeyDown.bind(this));
 
     this.configCloseBtn = document.getElementById("configCloseBtn");

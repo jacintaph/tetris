@@ -4,6 +4,14 @@ import { GameLoopView } from "./programView.js";
 import { Controller } from "./controller.js";
 import { Game } from "./game.js";
 
+/* -------- Event Listeners -------- */
+const playBtn = document.getElementById("startBtn");
+const configBtn = document.getElementById("configBtn");
+const scoresBtn = document.getElementById("scoresBtn");
+const exitBtn = document.getElementById("exitBtn");
+const configCloseBtn = document.getElementById("configCloseBtn");
+const scoresCloseBtn = document.getElementById("scoresCloseBtn");
+
 // Instantiate New Game Loop View
 // Includes rendering function
 const gameLoop = new GameLoopView();
@@ -13,14 +21,6 @@ const controller = new Controller(game, gameLoop);
 function play() {
   controller.play();
 }
-
-/* -------- Event Listeners -------- */
-const playBtn = document.getElementById("startBtn");
-const configBtn = document.getElementById("configBtn");
-const scoresBtn = document.getElementById("scoresBtn");
-const exitBtn = document.getElementById("exitBtn");
-const configCloseBtn = document.getElementById("configCloseBtn");
-const scoresCloseBtn = document.getElementById("scoresCloseBtn");
 
 function startGame() {
   gameLoop.start();
