@@ -1,8 +1,8 @@
 "use strict";
 
-import { GameLoopView } from "./programView.js";
+import { Game } from "./model.js";
 import { Controller } from "./controller.js";
-import { Game } from "./game.js";
+import { View } from "./view.js";
 
 /* -------- Event Listeners -------- */
 const playBtn = document.getElementById("startBtn");
@@ -12,26 +12,26 @@ const exitBtn = document.getElementById("exitBtn");
 const configCloseBtn = document.getElementById("configCloseBtn");
 const scoresCloseBtn = document.getElementById("scoresCloseBtn");
 
-// Instantiate New Game Loop View
-// Includes rendering function
-const gameLoop = new GameLoopView();
-const game = new Game();
-const controller = new Controller(game, gameLoop);
+// Instantiate application components
+const gameModel = new Game();
+const gameView = new View();
+const controller = new Controller(gameModel, gameView);
 
 function play() {
   controller.play();
 }
 
 function startGame() {
-  gameLoop.start();
+  controller.clearGame();
+  gameView.start();
 }
 
 function configuration() {
-  gameLoop.config();
+  gameView.config();
 }
 
 function highScores() {
-  gameLoop.highScores();
+  gameView.highScores();
 }
 
 function exitApp() {
@@ -43,27 +43,21 @@ function exitApp() {
   }
 }
 
-function closeScreen() {
-  const container = document.getElementById("container");
-  const childElements = container.children;
-
-  // Set all children other than startScreen to hidden
-  for (let i = 0; i < childElements.length - 1; i++) {
-    const element = childElements[i];
-    if (element.id !== "startScreen") {
-      gameLoop.toggleScreen(element.id, false);
-    }
-  }
-  gameLoop.startScreen();
-}
-
 playBtn.addEventListener("click", startGame);
 configBtn.addEventListener("click", configuration);
 scoresBtn.addEventListener("click", highScores);
 
 exitBtn.addEventListener("click", exitApp);
-configCloseBtn.addEventListener("click", closeScreen);
-scoresCloseBtn.addEventListener("click", closeScreen);
+
+configCloseBtn.addEventListener("click", () => {
+  gameView.toggleScreen("config", false);
+  gameView.toggleScreen("startScreen", true);
+});
+
+scoresCloseBtn.addEventListener("click", () => {
+  gameView.toggleScreen("highscores", false);
+  gameView.toggleScreen("startScreen", true);
+});
 
 // Config section input validation
 const quantityInputs = document.querySelectorAll(".quantity");

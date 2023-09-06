@@ -42,11 +42,13 @@ class NextBlockCanvas extends Canvas {
 
 export class Game {
   constructor() {
-    this.newGame();
+    this.createNewGame();
     this.nextBlockCanvas = new NextBlockCanvas();
   }
 
-  newGame() {
+  createNewGame() {
+    console.log(this.score)
+    console.log("cleargame2");
     this.updateGameSettings();
     this.score = 0;
     this.lines = 0;
@@ -93,10 +95,6 @@ export class Game {
     const index = Math.floor(Math.random() * 7);
     let block = new Tetromino(index, width);
     return block;
-  }
-
-  gameLevel() {
-    return Math.floor(this.lines * 0.1);
   }
 
   currentGameState() {
@@ -160,7 +158,7 @@ export class Game {
   moveBlockLeft() {
     this.currentBlock.x -= 1;
 
-    if (this.hasCollision()) {
+    if (this.blockCollision()) {
       this.currentBlock.x += 1;
     }
   }
@@ -168,7 +166,7 @@ export class Game {
   moveBlockRight() {
     this.currentBlock.x += 1;
 
-    if (this.hasCollision()) {
+    if (this.blockCollision()) {
       this.currentBlock.x -= 1;
     }
   }
@@ -179,7 +177,7 @@ export class Game {
     }
     this.currentBlock.y += 1;
 
-    if (this.hasCollision()) {
+    if (this.blockCollision()) {
       // Check for and Clear any full rows
       this.currentBlock.y -= 1;
       this.freezeBlock();
@@ -188,7 +186,7 @@ export class Game {
     }
 
     // Collision straight away = full board
-    if (this.hasCollision()) {
+    if (this.blockCollision()) {
       this.boardFull = true;
       return;
     }
@@ -216,7 +214,7 @@ export class Game {
   rotateBlock() {
     this.rotateBlocks();
 
-    if (this.hasCollision()) {
+    if (this.blockCollision()) {
       this.rotateBlocks(false);
     }
   }
@@ -247,7 +245,7 @@ export class Game {
     }
   }
 
-  hasCollision() {
+  blockCollision() {
     const { x: pieceX, y: pieceY } = this.currentBlock;
     let blocks = this.currentBlock.obj.shape;
     for (let y = 0; y < blocks.length; y++) {
@@ -276,5 +274,42 @@ export class Game {
         }
       }
     }
+  }
+}
+
+export class HighScores {
+  constructor() {
+    this.highScores = this.getHighScores(); // Initialise high scores data from local storage
+  }
+
+  getHighScores() {
+    const scoresString = localStorage.getItem(config.HIGH_SCORES);
+    // set default empty array if no recorded high scores
+    const scores = JSON.parse(scoresString) ?? [];
+    // get lowest score or return 0 if not exists
+    const topScores = scores.slice(0, 10);
+    const lowestScore = scores[topScores.length - 1]?.userScore ?? 0;
+
+    return { scores, lowestScore };
+  }
+
+  isHighScore(userScore) {
+    let { scores, lowestScore } = this.getHighScores();
+
+    if (userScore > lowestScore) {
+      return { userScore, scores };
+    } else {
+      return null;
+    }
+  }
+
+  saveHighScoreData(username, userScore, highScores) {
+    const newScore = { userScore, username };
+    // Add to list and sort
+    highScores.push(newScore);
+    highScores.sort((a, b) => b.userScore - a.userScore);
+    // Select new list and save to local storage
+    highScores.splice(config.TOTAL);
+    localStorage.setItem(config.HIGH_SCORES, JSON.stringify(highScores));
   }
 }

@@ -1,8 +1,12 @@
 import * as config from "./gameItems/variables.js";
+import { Game } from "./model.js";
+import { HighScores } from "./model.js";
+import { View } from "./view.js";
 export class Controller {
-  constructor(game, view) {
-    this.game = game;
-    this.view = view;
+  constructor(Game, View) {
+    this.game = Game;
+    this.highScores = new HighScores();
+    this.view = View;
     this.playing = false;
     this.paused = false;
     this.intervalId = null;
@@ -11,6 +15,8 @@ export class Controller {
   }
 
   setEventListeners() {
+    document.addEventListener("keydown", this.processKeyDown.bind(this));
+
     this.gameScreen = document.getElementById("gameScreen");
     this.confirmBtn = document.getElementById("confirmBtn");
     this.cancelBtn = document.getElementById("cancelBtn");
@@ -19,12 +25,10 @@ export class Controller {
     this.cancel = document.getElementById("saveCancelBtn");
     this.usernameInput = document.getElementById("username");
     this.saveScoreBox = document.getElementById("highScoreInput");
+    this.configCloseBtn = document.getElementById("configCloseBtn");
     this.userScore;
     this.highScores;
 
-    document.addEventListener("keydown", this.processKeyDown.bind(this));
-
-    this.configCloseBtn = document.getElementById("configCloseBtn");
     this.configCloseBtn.addEventListener("click", () => {
       this.game.updateGameSettings();
     });
@@ -47,15 +51,16 @@ export class Controller {
 
     this.save.addEventListener("click", () => {
       this.view.toggleScreen("usernameRequired", false);
-
       const username = this.usernameInput.value;
+
       if (username === "") {
         this.view.toggleScreen("usernameRequired", true);
       } else {
-        this.saveHighScore(username, this.userScore, this.highScores);
+        this.saveHighScoreData(username, this.userScore, this.highScores);
         this.view.toggleScreen("highScoreInput", false);
         this.view.toggleScreen("gameScreen", false);
         this.clearGame();
+
         this.view.startScreen();
       }
     });
@@ -77,15 +82,16 @@ export class Controller {
 
   exitGame() {
     this.view.toggleScreen("dialogBox", false);
-    this.saveHighScoreStats();
+    this.displayHighScoreDialog();
   }
 
-  saveHighScoreStats() {
+  displayHighScoreDialog() {
     const state = this.game.currentGameState();
     // get Final User Score and compare to the Leaderboard
-    const result = this.compareScores(state.score);
-    // Show Save High Score Dialog box if high score
-    if (result != null) {
+    const result = this.isHighScore(state.score);
+    console.log(result);
+    if (result != false) {
+      // user has qualified for a high score
       this.view.toggleScreen("canvas", false);
       this.userScore = result.userScore;
       this.highScores = result.scores;
@@ -149,7 +155,7 @@ export class Controller {
     if (!this.intervalId) {
       this.intervalId = setInterval(
         () => {
-          this.update();
+          this.updateState();
         },
         speed > 0 ? speed : 100
       );
@@ -170,13 +176,14 @@ export class Controller {
     this.updateView();
   }
 
-  update() {
+  updateState() {
     this.game.moveBlockDown();
     this.updateView();
   }
 
   updateView() {
     const state = this.game.currentGameState();
+
     if (state.complete) {
       this.view.renderMainScreen(state);
       this.view.renderLostScreen();
@@ -184,7 +191,7 @@ export class Controller {
 
       setTimeout(() => {
         this.view.renderLostScreen();
-        this.saveHighScoreStats();
+        this.displayHighScoreDialog();
       }, 1500);
     } else {
       this.view.renderMainScreen(state);
@@ -193,7 +200,7 @@ export class Controller {
 
   play() {
     this.startTimer();
-    this.getHighScores();
+    // this.game.getHighScores();
     this.updateView();
     this.playing = true;
     this.paused = false;
@@ -201,10 +208,12 @@ export class Controller {
   }
 
   clearGame() {
+    console.log("cleargame1");
     this.playing = false;
     this.paused = false;
-    this.game.newGame(); // reset game and next block
-    this.game.newNextBlockCanvas();
+    this.game.createNewGame(); // reset game and next block
+    console.log(this.game.currentGameState());
+    this.game.nextBlockCanvas.clear();
   }
 
   getHighScores() {
@@ -218,17 +227,17 @@ export class Controller {
     return { scores, lowestScore };
   }
 
-  compareScores(userScore) {
+  isHighScore(userScore) {
     let { scores, lowestScore } = this.getHighScores();
 
     if (userScore > lowestScore) {
       return { userScore, scores };
     } else {
-      return null;
+      return false;
     }
   }
 
-  saveHighScore(username, userScore, highScores) {
+  saveHighScoreData(username, userScore, highScores) {
     const newScore = { userScore, username };
     // Add to list and sort
     highScores.push(newScore);

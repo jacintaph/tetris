@@ -1,14 +1,5 @@
 import * as config from "./gameItems/variables.js";
-export class GameLoopView {
-  constructor(game) {
-    // this.fps = 60;
-    // this.cnv = null;
-    // this.loop = null;
-    // this.game = game;
-    // this.renderStats;
-    // this.saveScoreBox = document.getElementById("highScoreInput");
-  }
-
+export class View {
   startScreen() {
     this.toggleScreen("startScreen", true);
   }
@@ -39,7 +30,7 @@ export class GameLoopView {
     }
   }
 
-  clearScreen({ gameBoardState }) {
+  renderClearScreen({ gameBoardState }) {
     const width = gameBoardState.ctx.canvas.width;
     const height = gameBoardState.ctx.canvas.height;
     gameBoardState.ctx.clearRect(0, 0, width, height);
@@ -119,7 +110,7 @@ export class GameLoopView {
   }
 
   renderMainScreen(state) {
-    this.clearScreen(state);
+    this.renderClearScreen(state);
     this.renderPlayfield(state);
     this.renderNextBlock(state);
     this.renderStats(state);
