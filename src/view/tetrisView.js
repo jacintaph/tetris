@@ -1,11 +1,15 @@
-import * as config from "./gameItems/variables.js";
-export class View {
+import * as config from "../model/gameItems/variables.js";
+
+export class TetrisView {
   constructor() {
-    if (View._instance) {
-      return View._instance;
+    if (TetrisView._instance) {
+      return TetrisView._instance;
     }
-    View._instance = this;
+    TetrisView._instance = this;
   }
+
+  // The following function toggle off the current screen +/- toggle on the screen requested
+  // This will be the screen name in the function title
 
   showStartScreen() {
     this.toggleScreen("startScreen", true);
@@ -34,6 +38,7 @@ export class View {
   }
 
   showEscScreen() {
+    // only show esc screen if currently on the game screen
     if (!document.getElementById("gameScreen").classList.contains("hidden")) {
       this.toggleScreen("canvas", false);
       this.toggleScreen("dialogBox", true);
@@ -54,6 +59,7 @@ export class View {
   }
 
   toggleAudio(audioOn) {
+    // gamePlay is the game audio
     const gamePlay = document.getElementById("gamePlay");
 
     if (audioOn) {
@@ -62,6 +68,7 @@ export class View {
       gamePlay.play();
     }
 
+    // toggle the respective audio icons with the audio toggle
     this.toggleAudioIcons(audioOn);
     audioOn = !audioOn;
 
@@ -81,6 +88,7 @@ export class View {
     }
   }
 
+  // clear the gameBoardState canvas
   renderClearScreen({ gameBoardState }) {
     const width = gameBoardState.ctx.canvas.width;
     const height = gameBoardState.ctx.canvas.height;
@@ -100,10 +108,12 @@ export class View {
   renderNextBlock({ nextBlock }) {
     const nextCanvas = document.getElementById("next");
     const nextCtx = nextCanvas.getContext("2d");
-    // Clear the canvas
+    // Clear the nextBlock canvas
     nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
 
-    const blockSize = config.BLOCK_SIZE; // Adjust this size according to your design
+    const blockSize = config.BLOCK_SIZE;
+
+    // start the block in the "middle" of the nextBlock canvas
     const offsetX =
       (nextCanvas.width - blockSize * nextBlock.obj.shape[0].length) / 2;
     const offsetY =
@@ -112,6 +122,7 @@ export class View {
     for (let y = 0; y < nextBlock.obj.shape.length; y++) {
       for (let x = 0; x < nextBlock.obj.shape[y].length; x++) {
         if (nextBlock.obj.shape[y][x]) {
+          // render each individual tile of the Tetromino
           this.renderBlock(
             nextCtx,
             offsetX + x * blockSize,
@@ -126,6 +137,7 @@ export class View {
   }
 
   renderStats(state) {
+    // render the stats bar
     document.getElementById("score").textContent = state.score;
     document.getElementById("lines").textContent = state.lines;
     document.getElementById("level").textContent = state.gameLevel;
@@ -134,17 +146,21 @@ export class View {
   }
 
   renderPlayfield({ gameBoardState }) {
+    // render the main tetris board
     const canvasWidth = gameBoardState.ctx.canvas.width;
     const canvasHeight = gameBoardState.ctx.canvas.height;
     gameBoardState.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
+    // for each cell in the game board grid
     for (let y = 0; y < gameBoardState.grid.length; y++) {
       for (let x = 0; x < gameBoardState.grid[y].length; x++) {
         // block = number which corresponds to block type
         const block = gameBoardState.grid[y][x];
         const colour = config.blockColours[block];
 
+        // if the current cell is not = 0 = not empty
         if (block) {
+          // show a Tetromino tile
           this.renderBlock(
             gameBoardState.ctx,
             x * config.BLOCK_SIZE,
@@ -163,6 +179,7 @@ export class View {
   }
 
   renderMainScreen(state) {
+    // this "updates" the view
     this.renderClearScreen(state);
     this.renderPlayfield(state);
     this.renderNextBlock(state);
@@ -170,6 +187,7 @@ export class View {
   }
 
   renderLostScreen() {
+    // Game over screen when board is full
     const lostOverlay = document.getElementById("lost");
     lostOverlay.classList.toggle("active");
   }
@@ -189,9 +207,11 @@ export class View {
   }
 
   renderHighScore(index, highScores) {
+    // renders an individual score from the highscore array
     const rowId = `row_${index + 1}`;
     const row = document.getElementById(rowId);
     row.innerHTML = "";
+    // renders rank, name, and score
     row.innerHTML = `
         <td>${index + 1}</td>
         <td>${highScores[index].userName}</td>

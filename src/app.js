@@ -1,20 +1,21 @@
 // app.js
 "use strict";
 
-import { Game } from "./game.js";
-import { Controller } from "./controller.js";
-import { View } from "./view.js";
+import { TetrisModel } from "./model/tetrisModel.js";
+import { TetrisController } from "./controller/tetrisController.js";
+import { TetrisView } from "./view/tetrisView.js";
 
 class App {
   constructor() {
-    // Instantiate application components
-    const gameModel = new Game();
-    const gameView = new View();
-    this.controller = new Controller(gameModel, gameView);
+    // Instantiate application MVC components
+    const gameModel = new TetrisModel();
+    const gameView = new TetrisView();
+    this.tetrisController = new TetrisController(gameModel, gameView);
   }
 
   run() {
-    this.controller.openStartMenu();
+    // Begin the game by opening the start menu
+    this.tetrisController.openStartMenu();
   }
 }
 

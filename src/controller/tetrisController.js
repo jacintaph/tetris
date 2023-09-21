@@ -1,13 +1,12 @@
-// import * as config from "./gameItems/variables.js";
-import { Score } from "./game.js";
 import { EventSubject, EventObserver } from "./observer.js";
+import { Configuration } from "./configuration.js";
 
-export class Controller {
+export class TetrisController {
   constructor(Game, View) {
-    if (Controller._instance) {
-      return Controller._instance;
+    if (TetrisController._instance) {
+      return TetrisController._instance;
     }
-    Controller._instance = this;
+    TetrisController._instance = this;
 
     this.game = Game;
     this.configuration = new Configuration();
@@ -19,6 +18,7 @@ export class Controller {
   }
 
   openStartMenu() {
+    // create new instance of EventSubject (Observer pattern)
     this.eventSubject = new EventSubject();
     this.setEventListeners();
     this.setGameAudio();
@@ -26,6 +26,7 @@ export class Controller {
   }
 
   createObservers() {
+    // This function creates new observers for different events
     this.eventSubject.addObserver(
       "play",
       new EventObserver(() => {
@@ -83,6 +84,21 @@ export class Controller {
     );
 
     this.eventSubject.addObserver(
+      "cancelBtn",
+      new EventObserver(() => {
+        this.view.toggleScreen("dialogBox", false);
+        this.view.toggleScreen("canvas", true);
+
+        if (this.playing) {
+          this.paused = false;
+        }
+        if (this.paused) {
+          this.play();
+        }
+      })
+    );
+
+    this.eventSubject.addObserver(
       "scoreCancelBtn",
       new EventObserver(() => {
         this.view.toggleScreen("highScoreInput", false);
@@ -112,21 +128,6 @@ export class Controller {
     );
 
     this.eventSubject.addObserver(
-      "cancelBtn",
-      new EventObserver(() => {
-        this.view.toggleScreen("dialogBox", false);
-        this.view.toggleScreen("canvas", true);
-
-        if (this.playing) {
-          this.paused = false;
-        }
-        if (this.paused) {
-          this.play();
-        }
-      })
-    );
-
-    this.eventSubject.addObserver(
       "startGameBtn",
       new EventObserver(() => {
         this.play();
@@ -142,6 +143,8 @@ export class Controller {
   }
 
   setEventListeners() {
+    // This function sets event listeners via DOM element ID's
+    // The event subject sets a 'notify' method when the event trigger occurs
     this.usernameInput = document.getElementById("username");
 
     // Play btn on Main Menu Start Screen
@@ -236,18 +239,20 @@ export class Controller {
       this.view.toggleScreen("canvas", false);
       document.getElementById("highScoreInput").classList.remove("hidden");
 
+      // auto username = "AI" if in AI mode
       if (this.game.aIMode) {
         this.usernameInput.value = "AI";
       }
     } else {
+      // not a highscoore, so continue exiting game
       this.clearGame();
-      const state = this.game.currentGameState();
       this.view.toggleScreen("gameScreen", false);
       this.view.showStartScreen();
     }
   }
 
   keyBoardListener(event) {
+    // This function contains switch statements for different key presses
     const dialogBox = document.getElementById("dialogBox");
     let dialogBoxVisible = true;
 
@@ -260,20 +265,22 @@ export class Controller {
         if (
           document.getElementById("highScoreInput").classList.contains("hidden")
         ) {
-          this.audioOn = this.view.toggleAudio(true);
+          this.audioOn = this.view.toggleAudio(true); // also pause audio
           this.view.togglePauseScreen();
         }
         if (!dialogBoxVisible) {
           if (this.playing) {
+            // also pause game movements/block movements
             this.pause();
           } else if (this.paused) {
+            // if already paused, resume the game
             this.play();
           }
         }
         break;
       case 27: // 'ESC' (exit to start menu)
         if (this.playing) {
-          this.pause();
+          this.pause(); // pause the game play
           this.audioOn = this.view.toggleAudio(true);
         }
         this.view.showEscScreen();
@@ -288,6 +295,7 @@ export class Controller {
     }
 
     if (!this.game.aIMode && this.playing) {
+      // disable arrow key movements if in AI mode or if not playing game
       switch (event.keyCode) {
         case 37: // left
           this.game.moveBlockLeft();
@@ -310,11 +318,13 @@ export class Controller {
   }
 
   startTimer() {
+    // start timer 'interval clicks' for block downward movement
+    // speed increases at higher levels
     const speed = 1000 - this.game.currentGameState().gameLevel * 100;
     if (!this.intervalId) {
       this.intervalId = setInterval(
         () => {
-          this.updateState();
+          this.updateState(); // update state with each 'interval'
         },
         speed > 0 ? speed : 100
       );
@@ -322,6 +332,7 @@ export class Controller {
   }
 
   stopTimer() {
+    // clear the interval when timer stopped
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
@@ -333,7 +344,6 @@ export class Controller {
     this.updateView();
     this.playing = true;
     this.paused = false;
-    // localStorage.clear();
   }
 
   pause() {
@@ -352,9 +362,11 @@ export class Controller {
   }
 
   updateState() {
+    // update the game state
     this.game.moveBlockDown();
 
     if (this.game.fullRowEvent === true) {
+      // trigger sound event if full row
       this.fullRowSound.play();
       this.game.fullRowEvent = false;
     }
@@ -363,61 +375,20 @@ export class Controller {
   }
 
   updateView() {
-    const state = this.game.currentGameState();
+    const state = this.game.currentGameState(); // get current game state
     if (state.complete) {
+      // if game is complete
       this.view.renderMainScreen(state);
       this.view.renderLostScreen();
       this.stopTimer();
 
       setTimeout(() => {
+        // close lost screen after 3 seconds
         this.view.renderLostScreen();
         this.processScore();
       }, 3000);
     } else {
-      this.view.renderMainScreen(state);
+      this.view.renderMainScreen(state); // return to main menu screen
     }
-  }
-}
-
-class Configuration {
-  constructor() {
-    if (Configuration._instance) {
-      return Configuration._instance;
-    }
-    Configuration._instance = this;
-
-    this.setEventListeners();
-  }
-
-  setEventListeners() {
-    const quantityInputs = document.querySelectorAll(".quantity");
-    quantityInputs.forEach((input) => {
-      this.inputValidation(input);
-    });
-  }
-
-  inputValidation(input) {
-    let inputValue = parseFloat(input.value);
-    let minValue = parseFloat(input.min);
-    let maxValue = parseFloat(input.max);
-    let isTyping = false;
-
-    input.addEventListener("input", function () {
-      inputValue = parseFloat(this.value);
-      isTyping = true;
-    });
-
-    input.addEventListener("blur", function () {
-      // Prevent immediate change if user still typing
-      if (isTyping) {
-        isTyping = false;
-        // Check if the input value is outside the allowed range
-        if (inputValue < minValue) {
-          this.value = this.min;
-        } else if (inputValue > maxValue) {
-          this.value = this.max;
-        }
-      }
-    });
   }
 }

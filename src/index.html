@@ -8,17 +8,17 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
-    <script type="module" src="view.js"></script>
-    <script type="module" src="./gameItems/tetrominoes.js"></script>
+    <!-- <script type="module" src="./view/tetrisView.js"></script> -->
+    <!-- <script type="module" src="./model/gameItems/tetrominoes.js"></script> -->
     <script type="module" src="app.js"></script>
-    <script type="module" src="game.js"></script>
+    <!-- <script type="module" src="./model/tetrisModel.js"></script> -->
 
     <title>Tetris</title>
   </head>
   <body class="container" id="container">
-    <audio id="gamePlay" loop src="./sound/gamePlay.mp3"></audio>
-    <audio id="fullRow" src="./sound/fullRow.mp3"></audio>
-    <audio id="gameOver" src="./sound/gameOver.mp3"></audio>
+    <audio id="gamePlay" loop src="./view/sound/gamePlay.mp3"></audio>
+    <audio id="fullRow" src="./view/sound/fullRow.mp3"></audio>
+    <audio id="gameOver" src="./view/sound/gameOver.mp3"></audio>
     <div class="startScreen" id="startScreen">
       <div class="header">
         <h1 class="title">TETRIS</h1>
@@ -48,8 +48,6 @@
             <p>Next: </p>
             <canvas id="next" class="next">
           </div>
-            
-          <!-- </canvas> -->
 
           <div class="stats">
             <p>Score: <span id="score">0</span></p>
@@ -59,8 +57,8 @@
             <p>Game Mode: <span id="gameMode"></span></p>
             <p>Player Mode: <span id="playerMode"></span></p>
             <p>Group No: <span id="groupNo">25</span></p>
-            <img src="./icons/audioOn.png" class="icon hidden" id="audioOn">
-            <img src="./icons/audioOff.png" class="icon" id="audioOff">
+            <img src="./view/icons/audioOn.png" class="icon hidden" id="audioOn">
+            <img src="./view/icons/audioOff.png" class="icon" id="audioOff">
           </div>
           <button class="btn startBtn" id="startBtn">Start</button>
         </div>

@@ -11,14 +11,14 @@ export class Board {
     const cols = this.width;
     let grid = [];
 
-    // creating two-dimensional griday - fill with 0's
+    // Create two-dimensional zero'd array
     for (let i = 0; i < rows; i++) {
-      grid[i] = [];
+      grid[i] = []; // create empty column for every row
       for (let j = 0; j < cols; j++) {
         grid[i][j] = 0;
       }
     }
+
     return grid;
   }
-  
 }

@@ -1,59 +1,15 @@
 import * as config from "./gameItems/variables.js";
-import { Board } from "./gameItems/board.js";
+import { BoardCanvas, NextBlockCanvas } from "./canvas.js";
 import { Tetromino } from "./gameItems/tetrominoes.js";
-// import { Score } from "./score.js"  implement when moving to model folder
+import { Score } from "./score.js";
+import { AI } from "./artificialIntelligence.js";
 
-class Canvas {
-  constructor(width, height, id) {
-    this.canvas = document.getElementById(id);
-    this.ctx = this.canvas.getContext("2d");
-    this.width = width;
-    this.height = height;
-  }
-
-  clear() {
-    this.ctx.clearRect(0, 0, this.width, this.height);
-  }
-}
-
-class BoardCanvas extends Canvas {
-  constructor(width, height) {
-    super(width, height, "board");
-
-    this.setDimensions();
-  }
-
-  setDimensions() {
-    this.ctx.canvas.width = this.width * config.BLOCK_SIZE;
-    this.ctx.canvas.height = this.height * config.BLOCK_SIZE;
-  }
-
-  getBoard() {
-    let gameBoard = new Board(this.ctx, this.width, this.height);
-    return gameBoard;
-  }
-}
-
-class NextBlockCanvas extends Canvas {
+export class TetrisModel {
   constructor() {
-    super(0, 0, "next");
-
-    if (NextBlockCanvas._instance) {
-      return NextBlockCanvas._instance;
+    if (TetrisModel._instance) {
+      return TetrisModel._instance;
     }
-
-    NextBlockCanvas._instance = this;
-    this.width = this.canvas.width;
-    this.height = this.canvas.height;
-  }
-}
-
-export class Game {
-  constructor() {
-    if (Game._instance) {
-      return Game._instance;
-    }
-    Game._instance = this;
+    TetrisModel._instance = this;
 
     this.createNewGame();
     this.score = new Score();
@@ -64,7 +20,8 @@ export class Game {
   }
 
   createNewGame() {
-    this.updateGameSettings();
+    // create a new game, reset key attributes
+    this.updateGameSettings(); // update game attributes as per config page
     this.lines = 0;
     this.boardFull = false;
     this.currentBlock = this.getBlock(this.width);
@@ -94,7 +51,7 @@ export class Game {
       this.getUserSettings();
     this.width = width;
     this.height = height;
-    this.boardCanvas = new BoardCanvas(this.width, this.height);
+    this.boardCanvas = new BoardCanvas(this.width, this.height); // create a new game board
     this.gameBoard = this.boardCanvas.getBoard();
     this.gameLevel = gameLevel;
     this.gameMode = gameMode;
@@ -107,6 +64,7 @@ export class Game {
   }
 
   getBlock(width) {
+    // returns a new Tetromino (randomly selected)
     let index = 0;
     if (this.gameMode === "NORMAL") {
       index = Math.floor(Math.random() * 7);
@@ -120,16 +78,18 @@ export class Game {
   }
 
   currentGameState() {
-    const gameBoardState = this.boardCanvas.getBoard();
-    // coords of top left corner
-    const { x: pieceX, y: pieceY } = this.currentBlock;
-    let blocks = this.currentBlock.obj.shape;
+    // returns the current state of the game board (i.e., what pieces are on the board)
+    let gameBoardState = this.boardCanvas.getBoard();
+    const { x: pieceX, y: pieceY } = this.currentBlock; // coordinates of top left corner
+    let blocks = this.currentBlock.obj.shape; // Tetromino shape in array form
 
+    // Iterate over current board and copy state to gameBoardState
     for (let y = 0; y < this.gameBoard.grid.length; y++) {
-      // board height
+      // for each board row
       gameBoardState.grid[y] = [];
 
       for (let x = 0; x < this.gameBoard.grid[y].length; x++) {
+        // for each board column
         gameBoardState.grid[y][x] = this.gameBoard.grid[y][x];
       }
     }
@@ -167,9 +127,11 @@ export class Game {
   }
 
   updateStats(linesCleared) {
+    // Update user score if >0 rows were cleared
     if (linesCleared > 0) {
       this.score.userScore += config.pointSystem[linesCleared];
       this.lines += linesCleared;
+      // Increment game level by 1 for every 10 rows cleared
       this.gameLevel = Math.floor(this.lines / 10) + 1;
     }
   }
@@ -196,15 +158,15 @@ export class Game {
   }
 
   moveBlockDown() {
-    let score = new Score();
     if (this.boardFull) {
+      // stop block movement if board is full
       return;
     }
 
     this.currentBlock.y += 1;
 
     if (this.blockCollision()) {
-      // Check for and Clear any full rows
+      // Check for and clear any full rows
       this.currentBlock.y -= 1;
       this.freezeBlock();
       this.clearFullRows();
@@ -213,30 +175,9 @@ export class Game {
 
     // Collision straight away = full board
     if (this.blockCollision()) {
-      this.boardFull = true;
-      document.dispatchEvent(this.gameOverEvent);
+      this.boardFull = true; // set board is full attribute to true
+      document.dispatchEvent(this.gameOverEvent); // trigger game over event
       return;
-    }
-  }
-
-  clearFullRows() {
-    const grid = this.gameBoard.grid;
-    let numRowsCleared = 0;
-
-    for (let y = grid.length - 1; y >= 0; y--) {
-      if (grid[y].every((cell) => cell !== 0)) {
-        // This row is full
-        document.dispatchEvent(this.fullRowEvent);
-
-        grid.splice(y, 1); // Remove the full row
-        grid.unshift(Array.from({ length: this.width }, () => 0));
-        numRowsCleared++;
-        y++; // Recheck the same row since it has shifted down
-      }
-    }
-
-    if (numRowsCleared > 0) {
-      this.updateStats(numRowsCleared);
     }
   }
 
@@ -244,7 +185,7 @@ export class Game {
     this.rotateBlocks();
 
     if (this.blockCollision()) {
-      this.rotateBlocks(false);
+      this.rotateBlocks(false); // "Revert" rotation if block has collision
     }
   }
 
@@ -257,26 +198,52 @@ export class Game {
 
     for (let i = 0; i < x; i++) {
       for (let j = i; j < y - i; j++) {
-        const temp = blocks[i][j];
+        const tempBlock = blocks[i][j];
 
+        // perform rotation by replacing current block value with the value after the rotation is complete
         if (clockwise) {
+          // rotate clockwise 90 deg
           blocks[i][j] = blocks[y - j][i];
           blocks[y - j][i] = blocks[y - i][y - j];
           blocks[y - i][y - j] = blocks[j][y - i];
-          blocks[j][y - i] = temp;
+          blocks[j][y - i] = tempBlock;
         } else {
+          // rotate anti-clockwise 90 deg
           blocks[i][j] = blocks[j][y - i];
           blocks[j][y - i] = blocks[y - i][y - j];
           blocks[y - i][y - j] = blocks[y - j][i];
-          blocks[y - j][i] = temp;
+          blocks[y - j][i] = tempBlock;
         }
       }
+    }
+  }
+
+  clearFullRows() {
+    const grid = this.gameBoard.grid;
+    let numRowsCleared = 0;
+
+    for (let y = grid.length - 1; y >= 0; y--) {
+      if (grid[y].every((cell) => cell !== 0)) {
+        // if every cell not = 0 then row is full
+        document.dispatchEvent(this.fullRowEvent); // trigger full row event
+
+        grid.splice(y, 1); // Remove the full row
+        grid.unshift(Array.from({ length: this.width }, () => 0)); // create new row filled with 0's to beginning of array (mimic row removal)
+        numRowsCleared++;
+        y++; // Recheck the same row since it has shifted down
+      }
+    }
+
+    if (numRowsCleared > 0) {
+      this.updateStats(numRowsCleared); // update user score +/- game level
     }
   }
 
   blockCollision() {
     const { x: pieceX, y: pieceY } = this.currentBlock;
     let blocks = this.currentBlock.obj.shape;
+
+    // for each tile in the Tetromino
     for (let y = 0; y < blocks.length; y++) {
       for (let x = 0; x < blocks[y].length; x++) {
         if (
@@ -285,7 +252,7 @@ export class Game {
             this.gameBoard.grid[pieceY + y][pieceX + x] === undefined ||
             this.gameBoard.grid[pieceY + y][pieceX + x])
         ) {
-          return true;
+          return true; // the block has collided with another block or user attempts to move off the board (undefined)
         }
       }
     }
@@ -293,123 +260,16 @@ export class Game {
   }
 
   freezeBlock() {
-    const { x: pieceX, y: pieceY } = this.currentBlock;
+    const { x: pieceX, y: pieceY } = this.currentBlock; // current block coordinates (top left corner)
     let blocks = this.currentBlock.obj.shape;
 
     for (let y = 0; y < blocks.length; y++) {
       for (let x = 0; x < blocks[y].length; x++) {
         if (blocks[y][x]) {
+          // if there's a tile, it "locks" the piece in to the current grid position, by assigning the block value to the grid target value (original coord + current grid position considered)
           this.gameBoard.grid[pieceY + y][pieceX + x] = blocks[y][x];
         }
       }
     }
-  }
-}
-
-// Move to controllers
-
-// Artifical Intelligence Mode Based On A Genetic Algorithm
-class AI {
-  constructor() {
-    this.possibleMoves = [];
-  }
-
-  calcFieldHeights() {
-    // returns an array of heights of each column
-  }
-
-  calcEmptySpace() {}
-
-  getPossibleMoves() {}
-
-  getBestMove() {
-    return {};
-  }
-
-  calcMoveScore(board) {
-    // lower pieces and fewer gaps are preferred
-    let score = 0;
-
-    for (let row = 0; row < this.game.height; row++) {
-      let isRowFull = true;
-      let hasGap = false;
-
-      for (let col = 0; col < this.game.width; col++) {
-        if (board[row][col] === 0) {
-          isRowFull = false;
-        }
-
-        if (
-          board[row][col] === 1 &&
-          (row === this.game.height - 1 || board[row + 1][col] === 1)
-        ) {
-          hasGap = true;
-        }
-      }
-
-      if (isRowFull) {
-        score += 1;
-      }
-
-      if (!hasGap) {
-        score += 0.1;
-      }
-    }
-    return score;
-  }
-}
-
-// while Tetromino not in optimal position
-// move tetromino L/R/rotate
-
-export class Score {
-  constructor() {
-    if (Score._instance) {
-      return Score._instance;
-    }
-
-    Score._instance = this;
-
-    this.userScore = 0;
-  }
-
-  getHighScores() {
-    const scoresString = localStorage.getItem(config.HIGH_SCORES);
-    // set default empty array if no recorded high scores
-    const scores = JSON.parse(scoresString) ?? [];
-    // get lowest score or return 0 if not exists
-    const topScores = scores.slice(0, 10);
-    const lowestScore = scores[topScores.length - 1]?.userScore ?? 0;
-
-    return { scores, lowestScore };
-  }
-
-  isHighScore() {
-    let { scores, lowestScore } = this.getHighScores();
-
-    if (
-      this.userScore > lowestScore ||
-      (scores.length < 9 && this.userScore > 0)
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-
-  saveHighScoreData(userName) {
-    let { scores } = this.getHighScores();
-    const newScore = { userScore: this.userScore, userName };
-
-    // Add to list and sort
-    scores.push(newScore);
-    scores.sort((a, b) => b.userScore - a.userScore);
-    // Select new list and save to local storage
-    scores.splice(config.TOTAL);
-    localStorage.setItem(config.HIGH_SCORES, JSON.stringify(scores));
-  }
-
-  clearScore() {
-    this.userScore = 0;
   }
 }
