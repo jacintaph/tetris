@@ -1,6 +1,4 @@
 * {
-  /* font-family: "Poppins", sans-serif; */
-  /* font-family: "REM", sans-serif; */
   font-family: "Press Start 2P", cursive;
 }
 
@@ -42,19 +40,7 @@ button {
   background-color: #ddecff;
 }
 
-.startScreen {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
+.startScreen,
 .closeScreen {
   position: absolute;
   top: 0;
@@ -79,23 +65,10 @@ button {
 }
 
 /* ---- DIALOG BOX ---- */
-.dialogBox {
-  display: flex;
-  width: 500px;
-  padding: 20px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: solid #40e1d1 2px;
-  border-radius: 2%;
-  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,
-    rgba(45, 35, 66, 0.3) 0 7px 13px -3px, rgba(45, 35, 66, 0.4) 0 -3px 0 inset;
-  background-color: #36395a;
-}
-
+.dialogBox,
 .highScoreInputBox {
   display: flex;
-  /* width: 500px; */
+  width: auto;
   padding: 20px;
   flex-direction: column;
   justify-content: center;
@@ -200,6 +173,7 @@ button {
   background-color: wheat;
 }
 
+/* ---- CONFIGURATION SCREEN ------ */
 .configScreen {
   position: absolute;
   top: 50%;
@@ -212,7 +186,6 @@ button {
   justify-content: center;
   text-align: center;
   background-color: #36395a;
-  /* background-color: rgba(10, 7, 19, 0.4); */
   padding: 20px 20px 20px 30px;
   border: solid #40e1d1 5px;
   border-radius: 2%;
@@ -267,13 +240,6 @@ td {
 }
 
 /* ------ GAME SCREEN ------- */
-/* .gameScreen {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #ddecff;
-} */
 
 /* Set the gameScreen to take up the whole window */
 .gameScreen {
@@ -323,7 +289,7 @@ td {
 .startBtn {
   background-color: #00f707;
   font-size: 24px;
-  width: 100px
+  width: 100px;
 }
 
 #pause.overlay {
@@ -333,11 +299,11 @@ td {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-  z-index: 99; 
-  display: none; 
+  z-index: 99;
+  display: none;
 }
 
-/* Styles for the pause content */
+/* ---- PAUSE SCREEN ------ */
 #pause.overlay .content {
   position: absolute;
   top: 50%;
@@ -351,6 +317,7 @@ td {
   display: block;
 }
 
+/* ---- GAME OVER SCREEN ------ */
 #lost.overlay {
   position: absolute;
   top: 0;
@@ -359,10 +326,9 @@ td {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
   z-index: 99;
-  display: none; 
+  display: none;
 }
 
-/* Styles for the pause content */
 #lost.overlay .content {
   position: absolute;
   top: 50%;

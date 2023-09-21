@@ -1,6 +1,7 @@
-// Defines the constant variables in the Tetris game
+// Define constant variables
 export const HIGH_SCORES = "highScores";
 export const TOTAL = 10;
+
 // Define all tetromino types
 export const blocks = {
   0: {
