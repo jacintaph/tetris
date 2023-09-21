@@ -27,22 +27,22 @@ Welcome to Tetris, a classic puzzle game built using vanilla JavaScript, CSS, an
 
 | File Name                 | Description                                                                                                                              | Line Number |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| index.html                | The main HTML file defining the game structure, and referencing the CSS and JS files.                                                    | 216         |
-| styles.css                | A CSS file responsible for styling the elements and layout of the game.                                                                  | 216         |
-| app.js                    | The main JS file that initialises and manages the Tetris game. It coordinated the MVC design pattern implementation.                     | 216         |
-| tetrisController.js       | This file handles user input, keyboard events, and game interactions. It serves as the "Controller".                                     | 216         |
-| tetrisModel.js            | This file defines the game's data model. It includes all game business logic. It serves as the "Model".                                  | 216         |
-| tetrisView.js             | This file is responsible for rendering the game's UI. It interacts with the HTML Canvas elements amongst others, to serve as the "View". | 216         |
-| board.js                  | This file contains the Board class, containing key game Board attributes.                                                                | 216         |
-| tetrominoes.js            | This file contains the Tetromino class, defining key Tetromino object attributes.                                                        | 216         |
-| variables.js              | This file contains game constants e.g., Tetromino shapes and colours, and the scoring system.                                            | 216         |
-| canvas.js                 | This file contains the Canvas class and child nextBlock and BoardCanvas classes. These are used to render the playing field.             | 216         |
-| configuration.js          | This file contains the Configuration class, which holds logic to receive and validate user input in the Configuration screen.            | 216         |
-| observer.js               | This file contains the Observer design pattern classes, for configuring event listening.                                                 | 216         |
-| score.js                  | This file holds all logic to request and manipulate the highScore data and user score.                                                   | 216         |
-| artificialIntelligence.js | This file contains game logic for the AI player mode.                                                                                    | 216         |
+| index.html                | The main HTML file defining the game structure, and referencing the CSS and JS files.                                                    | 214         |
+| styles.css                | A CSS file responsible for styling the elements and layout of the game.                                                                  | 348         |
+| app.js                    | The main JS file that initialises and manages the Tetris game. It coordinated the MVC design pattern implementation.                     | 25          |
+| tetrisController.js       | This file handles user input, keyboard events, and game interactions. It serves as the "Controller".                                     | 395         |
+| tetrisModel.js            | This file defines the game's data model. It includes all game business logic. It serves as the "Model".                                  | 276         |
+| tetrisView.js             | This file is responsible for rendering the game's UI. It interacts with the HTML Canvas elements amongst others, to serve as the "View". | 228         |
+| board.js                  | This file contains the Board class, containing key game Board attributes.                                                                | 25          |
+| tetrominoes.js            | This file contains the Tetromino class, defining key Tetromino object attributes.                                                        | 43          |
+| variables.js              | This file contains game constants e.g., Tetromino shapes and colours, and the scoring system.                                            | 113         |
+| canvas.js                 | This file contains the Canvas class and child nextBlock and BoardCanvas classes. These are used to render the playing field.             | 49          |
+| configuration.js          | This file contains the Configuration class, which holds logic to receive and validate user input in the Configuration screen.            | 46          |
+| observer.js               | This file contains the Observer design pattern classes, for configuring event listening.                                                 | 28          |
+| score.js                  | This file holds all logic to request and manipulate the highScore data and user score.                                                   | 54          |
+| artificialIntelligence.js | This file contains game logic for the AI player mode.                                                                                    | 57          |
 
-### Total Lines =
+### Total Lines = 1901
 
 ## Naming Conventions
 
