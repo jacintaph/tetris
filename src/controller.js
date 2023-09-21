@@ -1,6 +1,6 @@
 // import * as config from "./gameItems/variables.js";
 import { Score } from "./game.js";
-import { EventSubject, EventObserver } from "./Observer.js";
+import { EventSubject, EventObserver } from "./observer.js";
 
 export class Controller {
   constructor(Game, View) {
@@ -236,7 +236,7 @@ export class Controller {
       this.view.toggleScreen("canvas", false);
       document.getElementById("highScoreInput").classList.remove("hidden");
 
-      if (this.game.AI) {
+      if (this.game.aIMode) {
         this.usernameInput.value = "AI";
       }
     } else {
@@ -287,7 +287,7 @@ export class Controller {
         break;
     }
 
-    if (!this.game.AI.on && this.playing) {
+    if (!this.game.aIMode && this.playing) {
       switch (event.keyCode) {
         case 37: // left
           this.game.moveBlockLeft();
