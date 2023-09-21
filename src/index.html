@@ -11,18 +11,21 @@
     <script type="module" src="view.js"></script>
     <script type="module" src="./gameItems/tetrominoes.js"></script>
     <script type="module" src="app.js"></script>
-    <script type="module" src="model.js"></script>
+    <script type="module" src="game.js"></script>
 
     <title>Tetris</title>
   </head>
   <body class="container" id="container">
+    <audio id="gamePlay" loop src="./sound/gamePlay.mp3"></audio>
+    <audio id="fullRow" src="./sound/fullRow.mp3"></audio>
+    <audio id="gameOver" src="./sound/gameOver.mp3"></audio>
     <div class="startScreen" id="startScreen">
       <div class="header">
         <h1 class="title">TETRIS</h1>
       </div>
 
       <div class="options">
-        <button class="btn start" id="startBtn">Play</button>
+        <button class="btn play" id="playBtn">Play</button>
         <button class="btn config" id="configBtn">Configure</button>
         <button class="btn highscores" id="scoresBtn">Scores</button>
         <button class="btn exit" id="exitBtn">Exit</button>
@@ -56,8 +59,10 @@
             <p>Game Mode: <span id="gameMode"></span></p>
             <p>Player Mode: <span id="playerMode"></span></p>
             <p>Group No: <span id="groupNo">25</span></p>
+            <img src="./icons/audioOn.png" class="icon hidden" id="audioOn">
+            <img src="./icons/audioOff.png" class="icon" id="audioOff">
           </div>
-          <button class="btn playBtn" onclick="play()">Start</button>
+          <button class="btn startBtn" id="startBtn">Start</button>
         </div>
       </div>
 
@@ -151,7 +156,7 @@
               id="gameModeOption"
               name="gameModeOption"
             >
-              <option class="dropDown" value="NORMAL">Normal</option>
+              <option class="dropDown" value="NORMAL" selected>Normal</option>
               <option class="dropDown" value="EXTENDED">Extended</option>
             </select>
           </td>
@@ -164,7 +169,7 @@
               id="playerModeOption"
               name="playerModeOption"
             >
-              <option class="dropDown" value="PLAYER">Player</option>
+              <option class="dropDown" value="PLAYER" selected>Player</option>
               <option class="dropDown" value="AI">AI</option>
             </select>
           </td>
@@ -195,6 +200,17 @@
         </tbody>
       </table>
       <button class="closeBtn btn exit" id="scoresCloseBtn">Close</button>
+    </div>
+
+    <div class="closeScreen hidden" id="closeScreen">
+      <h3>Thank you for playing. You can now close this window.</h3>
+    </div>
+    <div class="linkAttribution hidden" id="linkAttribution">
+      Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=68698">Pixabay</a>
+      Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6435">Pixabay</a>
+      Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6071">Pixabay</a>
+      <a target="_blank" href="https://icons8.com/icon/9414/no-audio">No Audio</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+      <a target="_blank" href="https://icons8.com/icon/9982/audio">Audio</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
     </div>
   </body>
 </html>

@@ -80,8 +80,10 @@ export const blocks = {
   8: {
     type: "LTwo",
     shape: [
-      [9, 0],
-      [9, 9],
+      [0, 0, 0, 0],
+      [0, 9, 0, 0],
+      [0, 9, 9, 0],
+      [0, 0, 0, 0],
     ],
     colour: "blue",
   },
@@ -104,4 +106,6 @@ export const blockColours = {
   5: "green",
   6: "purple",
   7: "red",
+  8: "cyan",
+  9: "blue",
 };

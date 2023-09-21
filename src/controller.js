@@ -1,109 +1,253 @@
-import * as config from "./gameItems/variables.js";
-import { Game } from "./model.js";
-import { HighScores } from "./model.js";
-import { View } from "./view.js";
+// import * as config from "./gameItems/variables.js";
+import { Score } from "./game.js";
+import { EventSubject, EventObserver } from "./Observer.js";
+
 export class Controller {
   constructor(Game, View) {
+    if (Controller._instance) {
+      return Controller._instance;
+    }
+    Controller._instance = this;
+
     this.game = Game;
-    this.highScores = new HighScores();
+    this.configuration = new Configuration();
     this.view = View;
     this.playing = false;
     this.paused = false;
     this.intervalId = null;
-
-    this.setEventListeners();
+    this.audioOn = false;
   }
 
-  setEventListeners() {
-    document.addEventListener("keydown", this.processKeyDown.bind(this));
+  openStartMenu() {
+    this.eventSubject = new EventSubject();
+    this.setEventListeners();
+    this.setGameAudio();
+    this.createObservers();
+  }
 
-    this.gameScreen = document.getElementById("gameScreen");
-    this.confirmBtn = document.getElementById("confirmBtn");
-    this.cancelBtn = document.getElementById("cancelBtn");
-    this.pauseOverlay = document.getElementById("pause");
-    this.save = document.getElementById("saveConfirmBtn");
-    this.cancel = document.getElementById("saveCancelBtn");
-    this.usernameInput = document.getElementById("username");
-    this.saveScoreBox = document.getElementById("highScoreInput");
-    this.configCloseBtn = document.getElementById("configCloseBtn");
-    this.userScore;
-    this.highScores;
+  createObservers() {
+    this.eventSubject.addObserver(
+      "play",
+      new EventObserver(() => {
+        const state = this.game.currentGameState();
+        this.view.renderStats(state);
+        this.view.showGameScreen();
+        this.game.boardCanvas.clear();
+      })
+    );
 
-    this.configCloseBtn.addEventListener("click", () => {
-      this.game.updateGameSettings();
-    });
+    this.eventSubject.addObserver(
+      "config",
+      new EventObserver(() => {
+        this.view.showConfig();
+      })
+    );
 
-    this.confirmBtn.addEventListener("click", () => {
-      this.exitGame();
-    });
+    this.eventSubject.addObserver(
+      "scores",
+      new EventObserver(() => {
+        this.view.showScores();
+      })
+    );
 
-    this.cancelBtn.addEventListener("click", () => {
-      this.view.toggleScreen("dialogBox", false);
-      this.view.toggleScreen("canvas", true);
+    this.eventSubject.addObserver(
+      "exitGame",
+      new EventObserver(() => {
+        this.view.showExitScreen();
+      })
+    );
 
-      if (this.playing) {
-        this.paused = false;
-      }
-      if (this.paused) {
-        this.play();
-      }
-    });
+    this.eventSubject.addObserver(
+      "configCloseBtn",
+      new EventObserver(() => {
+        this.game.updateGameSettings();
+        this.view.toggleScreen("config", false);
+        this.view.showStartScreen();
+      })
+    );
 
-    this.save.addEventListener("click", () => {
-      this.view.toggleScreen("usernameRequired", false);
-      const username = this.usernameInput.value;
+    this.eventSubject.addObserver(
+      "scoresCloseBtn",
+      new EventObserver(() => {
+        this.view.toggleScreen("highscores", false);
+        this.view.showStartScreen();
+      })
+    );
 
-      if (username === "") {
-        this.view.toggleScreen("usernameRequired", true);
-      } else {
-        this.saveHighScoreData(username, this.userScore, this.highScores);
+    this.eventSubject.addObserver(
+      "confirmBtn",
+      new EventObserver(() => {
+        this.view.toggleScreen("dialogBox", false);
+        this.processScore();
+      })
+    );
+
+    this.eventSubject.addObserver(
+      "scoreCancelBtn",
+      new EventObserver(() => {
         this.view.toggleScreen("highScoreInput", false);
         this.view.toggleScreen("gameScreen", false);
         this.clearGame();
+        this.view.showStartScreen();
+      })
+    );
 
-        this.view.startScreen();
+    this.eventSubject.addObserver(
+      "scoreSaveBtn",
+      new EventObserver(() => {
+        this.view.toggleScreen("usernameRequired", false);
+        let userName = this.usernameInput.value;
+
+        if (userName === "") {
+          this.view.toggleScreen("usernameRequired", true);
+        } else {
+          this.game.score.saveHighScoreData(userName);
+          this.view.toggleScreen("highScoreInput", false);
+          this.view.toggleScreen("gameScreen", false);
+          this.clearGame();
+
+          this.view.showStartScreen();
+        }
+      })
+    );
+
+    this.eventSubject.addObserver(
+      "cancelBtn",
+      new EventObserver(() => {
+        this.view.toggleScreen("dialogBox", false);
+        this.view.toggleScreen("canvas", true);
+
+        if (this.playing) {
+          this.paused = false;
+        }
+        if (this.paused) {
+          this.play();
+        }
+      })
+    );
+
+    this.eventSubject.addObserver(
+      "startGameBtn",
+      new EventObserver(() => {
+        this.play();
+      })
+    );
+
+    this.eventSubject.addObserver(
+      "keyBoardPress",
+      new EventObserver((event) => {
+        this.keyBoardListener(event);
+      })
+    );
+  }
+
+  setEventListeners() {
+    this.usernameInput = document.getElementById("username");
+
+    // Play btn on Main Menu Start Screen
+    const playBtn = document.getElementById("playBtn");
+    playBtn.addEventListener("click", () => {
+      this.eventSubject.notify("play");
+    });
+
+    const configBtn = document.getElementById("configBtn");
+    configBtn.addEventListener("click", () => {
+      this.eventSubject.notify("config");
+    });
+
+    const scoresBtn = document.getElementById("scoresBtn");
+    scoresBtn.addEventListener("click", () => {
+      this.eventSubject.notify("scores");
+    });
+
+    const exitBtn = document.getElementById("exitBtn");
+    exitBtn.addEventListener("click", () => {
+      this.eventSubject.notify("exitGame");
+    });
+
+    const configCloseBtn = document.getElementById("configCloseBtn");
+    configCloseBtn.addEventListener("click", () => {
+      this.eventSubject.notify("configCloseBtn");
+    });
+
+    const scoresCloseBtn = document.getElementById("scoresCloseBtn");
+    scoresCloseBtn.addEventListener("click", () => {
+      this.eventSubject.notify("scoresCloseBtn");
+    });
+
+    const confirmBtn = document.getElementById("confirmBtn");
+    confirmBtn.addEventListener("click", () => {
+      this.eventSubject.notify("confirmBtn");
+    });
+
+    const cancelBtn = document.getElementById("cancelBtn");
+    cancelBtn.addEventListener("click", () => {
+      this.eventSubject.notify("cancelBtn");
+    });
+
+    const save = document.getElementById("saveConfirmBtn");
+    save.addEventListener("click", () => {
+      this.eventSubject.notify("scoreSaveBtn");
+    });
+
+    const cancel = document.getElementById("saveCancelBtn");
+    cancel.addEventListener("click", () => {
+      this.eventSubject.notify("scoreCancelBtn");
+    });
+
+    document.addEventListener("keydown", (event) => {
+      this.eventSubject.notify("keyBoardPress", event);
+    });
+
+    // Green start button on Game Screen
+    const startGameBtn = document.getElementById("startBtn");
+    startGameBtn.addEventListener("click", () => {
+      this.eventSubject.notify("startGameBtn");
+    });
+  }
+
+  setGameAudio() {
+    this.fullRowSound = document.getElementById("fullRow");
+    this.gameOverSound = document.getElementById("gameOver");
+
+    // Subscribe to the fullRowEvent
+    document.addEventListener("fullRow", () => {
+      if (this.audioOn) {
+        this.fullRowSound.play();
       }
     });
 
-    this.cancel.addEventListener("click", () => {
-      this.view.toggleScreen("highScoreInput", false);
-      this.view.toggleScreen("gameScreen", false);
-      this.clearGame();
-      this.view.startScreen();
+    // Subscribe to the gameOverEvent
+    document.addEventListener("gameOver", () => {
+      if (this.audioOn) {
+        this.gameOverSound.play();
+        this.audioOn = this.view.toggleAudio(true);
+      }
     });
   }
 
-  escKeyFunction() {
-    if (!this.gameScreen.classList.contains("hidden")) {
-      this.view.toggleScreen("canvas", false);
-      this.view.toggleScreen("dialogBox", true);
-    }
-  }
-
-  exitGame() {
-    this.view.toggleScreen("dialogBox", false);
-    this.displayHighScoreDialog();
-  }
-
-  displayHighScoreDialog() {
+  processScore() {
     const state = this.game.currentGameState();
-    // get Final User Score and compare to the Leaderboard
-    const result = this.isHighScore(state.score);
-    console.log(result);
-    if (result != false) {
+    // get final User Score and compare to the Leaderboard
+    const isHighScore = this.game.score.isHighScore(state.score);
+
+    if (isHighScore) {
       // user has qualified for a high score
       this.view.toggleScreen("canvas", false);
-      this.userScore = result.userScore;
-      this.highScores = result.scores;
-      this.saveScoreBox.classList.remove("hidden");
+      document.getElementById("highScoreInput").classList.remove("hidden");
+
+      if (this.game.AI) {
+        this.usernameInput.value = "AI";
+      }
     } else {
       this.clearGame();
+      const state = this.game.currentGameState();
       this.view.toggleScreen("gameScreen", false);
-      this.view.startScreen();
+      this.view.showStartScreen();
     }
   }
 
-  processKeyDown(event) {
+  keyBoardListener(event) {
     const dialogBox = document.getElementById("dialogBox");
     let dialogBoxVisible = true;
 
@@ -113,8 +257,11 @@ export class Controller {
 
     switch (event.keyCode) {
       case 80: // 'P' (pause)
-        if (this.saveScoreBox.classList.contains("hidden")) {
-          this.pauseOverlay.classList.toggle("active");
+        if (
+          document.getElementById("highScoreInput").classList.contains("hidden")
+        ) {
+          this.audioOn = this.view.toggleAudio(true);
+          this.view.togglePauseScreen();
         }
         if (!dialogBoxVisible) {
           if (this.playing) {
@@ -127,26 +274,38 @@ export class Controller {
       case 27: // 'ESC' (exit to start menu)
         if (this.playing) {
           this.pause();
+          this.audioOn = this.view.toggleAudio(true);
         }
-        this.escKeyFunction();
+        this.view.showEscScreen();
         break;
-      case 37: // left
-        this.game.moveBlockLeft();
-        this.updateView();
+      case 77: // 'M' toggle game audio
+        if (this.playing) {
+          this.audioOn = this.view.toggleAudio(this.audioOn);
+        } else {
+          this.audioOn = this.view.toggleAudio(true);
+        }
         break;
-      case 38: // up
-        this.game.rotateBlock();
-        this.updateView();
-        break;
-      case 39: // right
-        this.game.moveBlockRight();
-        this.updateView();
-        break;
-      case 40: // down
-        // this.stopTimer();
-        this.game.moveBlockDown();
-        this.updateView();
-        break;
+    }
+
+    if (!this.game.AI.on && this.playing) {
+      switch (event.keyCode) {
+        case 37: // left
+          this.game.moveBlockLeft();
+          this.updateView();
+          break;
+        case 38: // up
+          this.game.rotateBlock();
+          this.updateView();
+          break;
+        case 39: // right
+          this.game.moveBlockRight();
+          this.updateView();
+          break;
+        case 40: // down
+          this.game.moveBlockDown();
+          this.updateView();
+          break;
+      }
     }
   }
 
@@ -169,6 +328,14 @@ export class Controller {
     }
   }
 
+  play() {
+    this.startTimer();
+    this.updateView();
+    this.playing = true;
+    this.paused = false;
+    // localStorage.clear();
+  }
+
   pause() {
     this.playing = false;
     this.paused = true;
@@ -176,14 +343,27 @@ export class Controller {
     this.updateView();
   }
 
+  clearGame() {
+    this.playing = false;
+    this.paused = false;
+    this.game.createNewGame(); // reset game and next block
+    this.game.score.clearScore();
+    this.game.nextBlockCanvas.clear();
+  }
+
   updateState() {
     this.game.moveBlockDown();
+
+    if (this.game.fullRowEvent === true) {
+      this.fullRowSound.play();
+      this.game.fullRowEvent = false;
+    }
+
     this.updateView();
   }
 
   updateView() {
     const state = this.game.currentGameState();
-
     if (state.complete) {
       this.view.renderMainScreen(state);
       this.view.renderLostScreen();
@@ -191,59 +371,53 @@ export class Controller {
 
       setTimeout(() => {
         this.view.renderLostScreen();
-        this.displayHighScoreDialog();
-      }, 1500);
+        this.processScore();
+      }, 3000);
     } else {
       this.view.renderMainScreen(state);
     }
   }
+}
 
-  play() {
-    this.startTimer();
-    // this.game.getHighScores();
-    this.updateView();
-    this.playing = true;
-    this.paused = false;
-    // localStorage.clear();
-  }
-
-  clearGame() {
-    console.log("cleargame1");
-    this.playing = false;
-    this.paused = false;
-    this.game.createNewGame(); // reset game and next block
-    console.log(this.game.currentGameState());
-    this.game.nextBlockCanvas.clear();
-  }
-
-  getHighScores() {
-    const scoresString = localStorage.getItem(config.HIGH_SCORES);
-    // set default empty array if no recorded high scores
-    const scores = JSON.parse(scoresString) ?? [];
-    // get lowest score or return 0 if not exists
-    const topScores = scores.slice(0, 10);
-    const lowestScore = scores[topScores.length - 1]?.userScore ?? 0;
-
-    return { scores, lowestScore };
-  }
-
-  isHighScore(userScore) {
-    let { scores, lowestScore } = this.getHighScores();
-
-    if (userScore > lowestScore) {
-      return { userScore, scores };
-    } else {
-      return false;
+class Configuration {
+  constructor() {
+    if (Configuration._instance) {
+      return Configuration._instance;
     }
+    Configuration._instance = this;
+
+    this.setEventListeners();
   }
 
-  saveHighScoreData(username, userScore, highScores) {
-    const newScore = { userScore, username };
-    // Add to list and sort
-    highScores.push(newScore);
-    highScores.sort((a, b) => b.userScore - a.userScore);
-    // Select new list and save to local storage
-    highScores.splice(config.TOTAL);
-    localStorage.setItem(config.HIGH_SCORES, JSON.stringify(highScores));
+  setEventListeners() {
+    const quantityInputs = document.querySelectorAll(".quantity");
+    quantityInputs.forEach((input) => {
+      this.inputValidation(input);
+    });
+  }
+
+  inputValidation(input) {
+    let inputValue = parseFloat(input.value);
+    let minValue = parseFloat(input.min);
+    let maxValue = parseFloat(input.max);
+    let isTyping = false;
+
+    input.addEventListener("input", function () {
+      inputValue = parseFloat(this.value);
+      isTyping = true;
+    });
+
+    input.addEventListener("blur", function () {
+      // Prevent immediate change if user still typing
+      if (isTyping) {
+        isTyping = false;
+        // Check if the input value is outside the allowed range
+        if (inputValue < minValue) {
+          this.value = this.min;
+        } else if (inputValue > maxValue) {
+          this.value = this.max;
+        }
+      }
+    });
   }
 }

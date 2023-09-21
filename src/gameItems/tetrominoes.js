@@ -1,3 +1,25 @@
+/* import * as constants from "./variables.js";
+
+export class Tetromino {
+  constructor(index) {
+    this.index = index;
+    this.setBlockShape();
+  }
+
+  setBlockShape() {
+    this.obj = { ...constants.blocks[this.index] }; // create shallow cpy
+    this.obj.shape = this.obj.shape.map((row) => [...row]);
+  }
+
+  setBlockPosition(width) {
+    // board width in terms of individual block pieces
+    const boardWidth = Math.floor(width / constants.BLOCK_SIZE);
+
+    this.x = Math.floor((boardWidth - this.obj.shape[0].length) / 2); // center horizontal
+    this.y = -1; 
+  }
+} */
+
 import * as constants from "./variables.js";
 
 export class Tetromino {

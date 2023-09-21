@@ -1,6 +1,7 @@
 import * as config from "./gameItems/variables.js";
 import { Board } from "./gameItems/board.js";
 import { Tetromino } from "./gameItems/tetrominoes.js";
+// import { Score } from "./score.js"  implement when moving to model folder
 
 class Canvas {
   constructor(width, height, id) {
@@ -15,9 +16,10 @@ class Canvas {
   }
 }
 
-class MainBoard extends Canvas {
+class BoardCanvas extends Canvas {
   constructor(width, height) {
     super(width, height, "board");
+
     this.setDimensions();
   }
 
@@ -35,6 +37,12 @@ class MainBoard extends Canvas {
 class NextBlockCanvas extends Canvas {
   constructor() {
     super(0, 0, "next");
+
+    if (NextBlockCanvas._instance) {
+      return NextBlockCanvas._instance;
+    }
+
+    NextBlockCanvas._instance = this;
     this.width = this.canvas.width;
     this.height = this.canvas.height;
   }
@@ -42,19 +50,26 @@ class NextBlockCanvas extends Canvas {
 
 export class Game {
   constructor() {
+    if (Game._instance) {
+      return Game._instance;
+    }
+    Game._instance = this;
+
     this.createNewGame();
+    this.score = new Score();
+    this.aI = new AI();
     this.nextBlockCanvas = new NextBlockCanvas();
+    this.fullRowEvent = new Event("fullRow");
+    this.gameOverEvent = new Event("gameOver");
   }
 
   createNewGame() {
-    console.log(this.score)
-    console.log("cleargame2");
     this.updateGameSettings();
-    this.score = 0;
     this.lines = 0;
     this.boardFull = false;
     this.currentBlock = this.getBlock(this.width);
     this.nextBlock = this.getBlock(this.width);
+    this.aIMode = false;
   }
 
   getUserSettings() {
@@ -79,26 +94,33 @@ export class Game {
       this.getUserSettings();
     this.width = width;
     this.height = height;
-    this.mainBoard = new MainBoard(this.width, this.height);
-    this.gameBoard = this.mainBoard.getBoard();
+    this.boardCanvas = new BoardCanvas(this.width, this.height);
+    this.gameBoard = this.boardCanvas.getBoard();
     this.gameLevel = gameLevel;
     this.gameMode = gameMode;
     this.playerMode = playerMode;
-
-    // Render initial Config settings
-    document.getElementById("level").textContent = this.gameLevel;
-    document.getElementById("playerMode").textContent = this.playerMode;
-    document.getElementById("gameMode").textContent = this.gameMode;
+    if (this.playerMode === "AI") {
+      this.aIMode = true;
+    } else {
+      this.aIMode = false;
+    }
   }
 
   getBlock(width) {
-    const index = Math.floor(Math.random() * 7);
+    let index = 0;
+    if (this.gameMode === "NORMAL") {
+      index = Math.floor(Math.random() * 7);
+    } else if (this.gameMode === "EXTENDED") {
+      index = Math.floor(Math.random() * 9);
+    }
     let block = new Tetromino(index, width);
+    // block.setBlockPosition(width);
+
     return block;
   }
 
   currentGameState() {
-    const gameBoardState = this.mainBoard.getBoard();
+    const gameBoardState = this.boardCanvas.getBoard();
     // coords of top left corner
     const { x: pieceX, y: pieceY } = this.currentBlock;
     let blocks = this.currentBlock.obj.shape;
@@ -134,9 +156,11 @@ export class Game {
 
     return {
       gameBoardState,
-      score: this.score,
+      score: this.score.userScore,
       lines: this.lines,
       gameLevel: this.gameLevel,
+      playerMode: this.playerMode,
+      gameMode: this.gameMode,
       nextBlock: this.nextBlock,
       complete: this.boardFull,
     };
@@ -144,13 +168,13 @@ export class Game {
 
   updateStats(linesCleared) {
     if (linesCleared > 0) {
-      this.score += config.pointSystem[linesCleared];
+      this.score.userScore += config.pointSystem[linesCleared];
       this.lines += linesCleared;
       this.gameLevel = Math.floor(this.lines / 10) + 1;
     }
   }
 
-  updatePieces() {
+  setNextBlock() {
     this.currentBlock = this.nextBlock;
     this.nextBlock = this.getBlock(this.width);
   }
@@ -172,9 +196,11 @@ export class Game {
   }
 
   moveBlockDown() {
+    let score = new Score();
     if (this.boardFull) {
       return;
     }
+
     this.currentBlock.y += 1;
 
     if (this.blockCollision()) {
@@ -182,12 +208,13 @@ export class Game {
       this.currentBlock.y -= 1;
       this.freezeBlock();
       this.clearFullRows();
-      this.updatePieces();
+      this.setNextBlock();
     }
 
     // Collision straight away = full board
     if (this.blockCollision()) {
       this.boardFull = true;
+      document.dispatchEvent(this.gameOverEvent);
       return;
     }
   }
@@ -199,6 +226,8 @@ export class Game {
     for (let y = grid.length - 1; y >= 0; y--) {
       if (grid[y].every((cell) => cell !== 0)) {
         // This row is full
+        document.dispatchEvent(this.fullRowEvent);
+
         grid.splice(y, 1); // Remove the full row
         grid.unshift(Array.from({ length: this.width }, () => 0));
         numRowsCleared++;
@@ -277,9 +306,71 @@ export class Game {
   }
 }
 
-export class HighScores {
+// Move to controllers
+
+// Artifical Intelligence Mode Based On A Genetic Algorithm
+class AI {
   constructor() {
-    this.highScores = this.getHighScores(); // Initialise high scores data from local storage
+    this.possibleMoves = [];
+  }
+
+  calcFieldHeights() {
+    // returns an array of heights of each column
+  }
+
+  calcEmptySpace() {}
+
+  getPossibleMoves() {}
+
+  getBestMove() {
+    return {};
+  }
+
+  calcMoveScore(board) {
+    // lower pieces and fewer gaps are preferred
+    let score = 0;
+
+    for (let row = 0; row < this.game.height; row++) {
+      let isRowFull = true;
+      let hasGap = false;
+
+      for (let col = 0; col < this.game.width; col++) {
+        if (board[row][col] === 0) {
+          isRowFull = false;
+        }
+
+        if (
+          board[row][col] === 1 &&
+          (row === this.game.height - 1 || board[row + 1][col] === 1)
+        ) {
+          hasGap = true;
+        }
+      }
+
+      if (isRowFull) {
+        score += 1;
+      }
+
+      if (!hasGap) {
+        score += 0.1;
+      }
+    }
+    return score;
+  }
+}
+
+// while Tetromino not in optimal position
+// move tetromino L/R/rotate
+
+export class Score {
+  constructor() {
+    if (Score._instance) {
+      return Score._instance;
+    }
+
+    Score._instance = this;
+
+    this.userScore = 0;
   }
 
   getHighScores() {
@@ -293,23 +384,32 @@ export class HighScores {
     return { scores, lowestScore };
   }
 
-  isHighScore(userScore) {
+  isHighScore() {
     let { scores, lowestScore } = this.getHighScores();
 
-    if (userScore > lowestScore) {
-      return { userScore, scores };
-    } else {
-      return null;
+    if (
+      this.userScore > lowestScore ||
+      (scores.length < 9 && this.userScore > 0)
+    ) {
+      return true;
     }
+
+    return false;
   }
 
-  saveHighScoreData(username, userScore, highScores) {
-    const newScore = { userScore, username };
+  saveHighScoreData(userName) {
+    let { scores } = this.getHighScores();
+    const newScore = { userScore: this.userScore, userName };
+
     // Add to list and sort
-    highScores.push(newScore);
-    highScores.sort((a, b) => b.userScore - a.userScore);
+    scores.push(newScore);
+    scores.sort((a, b) => b.userScore - a.userScore);
     // Select new list and save to local storage
-    highScores.splice(config.TOTAL);
-    localStorage.setItem(config.HIGH_SCORES, JSON.stringify(highScores));
+    scores.splice(config.TOTAL);
+    localStorage.setItem(config.HIGH_SCORES, JSON.stringify(scores));
+  }
+
+  clearScore() {
+    this.userScore = 0;
   }
 }
