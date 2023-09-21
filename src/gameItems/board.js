@@ -9,17 +9,16 @@ export class Board {
   emptyBoard() {
     const rows = this.height;
     const cols = this.width;
-    let arr = [];
+    let grid = [];
 
-    // creating two-dimensional array - fill with 0's
+    // creating two-dimensional griday - fill with 0's
     for (let i = 0; i < rows; i++) {
-      arr[i] = [];
+      grid[i] = [];
       for (let j = 0; j < cols; j++) {
-        arr[i][j] = 0;
+        grid[i][j] = 0;
       }
     }
-    return arr;
-    // return Array.from({ length: rows }, () => Array(cols).fill(0));
+    return grid;
   }
   
 }

@@ -1,33 +1,47 @@
 import * as config from "./gameItems/variables.js";
-export class GameLoopView {
-  constructor(game) {
-    // this.fps = 60;
-    // this.cnv = null;
-    // this.loop = null;
-    // this.game = game;
-    // this.renderStats;
-    // this.saveScoreBox = document.getElementById("highScoreInput");
+export class View {
+  constructor() {
+    if (View._instance) {
+      return View._instance;
+    }
+    View._instance = this;
   }
 
-  startScreen() {
+  showStartScreen() {
     this.toggleScreen("startScreen", true);
   }
 
-  start() {
+  showGameScreen() {
     this.toggleScreen("startScreen", false);
     this.toggleScreen("gameScreen", true);
     this.toggleScreen("canvas", true);
   }
 
-  config() {
+  showConfig() {
     this.toggleScreen("startScreen", false);
     this.toggleScreen("config", true);
   }
 
-  highScores() {
-    this.renderHighScores();
+  showScores() {
+    this.renderHighScoresTable();
     this.toggleScreen("startScreen", false);
     this.toggleScreen("highscores", true);
+  }
+
+  showExitScreen() {
+    this.toggleScreen("startScreen", false);
+    this.toggleScreen("closeScreen", true);
+  }
+
+  showEscScreen() {
+    if (!document.getElementById("gameScreen").classList.contains("hidden")) {
+      this.toggleScreen("canvas", false);
+      this.toggleScreen("dialogBox", true);
+    }
+  }
+
+  togglePauseScreen() {
+    document.getElementById("pause").classList.toggle("active");
   }
 
   toggleScreen(id, toggle) {
@@ -39,7 +53,35 @@ export class GameLoopView {
     }
   }
 
-  clearScreen({ gameBoardState }) {
+  toggleAudio(audioOn) {
+    const gamePlay = document.getElementById("gamePlay");
+
+    if (audioOn) {
+      gamePlay.pause();
+    } else {
+      gamePlay.play();
+    }
+
+    this.toggleAudioIcons(audioOn);
+    audioOn = !audioOn;
+
+    return audioOn;
+  }
+
+  toggleAudioIcons(audioOn) {
+    const audioOnIcon = document.getElementById("audioOff");
+    const audioOffIcon = document.getElementById("audioOn");
+
+    if (audioOn) {
+      audioOnIcon.classList.remove("hidden");
+      audioOffIcon.classList.add("hidden");
+    } else {
+      audioOnIcon.classList.add("hidden");
+      audioOffIcon.classList.remove("hidden");
+    }
+  }
+
+  renderClearScreen({ gameBoardState }) {
     const width = gameBoardState.ctx.canvas.width;
     const height = gameBoardState.ctx.canvas.height;
     gameBoardState.ctx.clearRect(0, 0, width, height);
@@ -87,6 +129,8 @@ export class GameLoopView {
     document.getElementById("score").textContent = state.score;
     document.getElementById("lines").textContent = state.lines;
     document.getElementById("level").textContent = state.gameLevel;
+    document.getElementById("playerMode").textContent = state.playerMode;
+    document.getElementById("gameMode").textContent = state.gameMode;
   }
 
   renderPlayfield({ gameBoardState }) {
@@ -119,7 +163,7 @@ export class GameLoopView {
   }
 
   renderMainScreen(state) {
-    this.clearScreen(state);
+    this.renderClearScreen(state);
     this.renderPlayfield(state);
     this.renderNextBlock(state);
     this.renderStats(state);
@@ -130,7 +174,7 @@ export class GameLoopView {
     lostOverlay.classList.toggle("active");
   }
 
-  renderHighScores() {
+  renderHighScoresTable() {
     // Get highScores data from local storage if exists, otherwise empty array
     const highScores =
       JSON.parse(localStorage.getItem(config.HIGH_SCORES)) ?? [];
@@ -138,31 +182,26 @@ export class GameLoopView {
     // Sort the high scores in descending order
     highScores.sort((a, b) => b.score - a.score);
 
-    // Iterate through the top 10 high scores or the available number of high scores
+    // Iterate through the top 10 high scores
     for (let i = 0; i < highScores.length; i++) {
-      const rowId = `row_${i + 1}`;
-      const row = document.getElementById(rowId);
-      row.innerHTML = "";
-      row.innerHTML = `
-        <td>${i + 1}</td>
-        <td>${highScores[i].username}</td>
-        <td>${highScores[i].userScore}</td>
+      this.renderHighScore(i, highScores);
+    }
+  }
+
+  renderHighScore(index, highScores) {
+    const rowId = `row_${index + 1}`;
+    const row = document.getElementById(rowId);
+    row.innerHTML = "";
+    row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${highScores[index].userName}</td>
+        <td>${highScores[index].userScore}</td>
       `;
-    }
+    const cells = row.getElementsByTagName("td");
 
-    const numToShow = Math.min(highScores.length, 10);
-
-    for (let i = 0; i < numToShow; i++) {
-      const rowId = `row_${i + 1}`;
-      const row = document.getElementById(rowId);
-
-      // Get the cells in the row
-      const cells = row.getElementsByTagName("td");
-
-      // Update the content of the cells
-      cells[0].value = i + 1; // Rank starts from 1
-      cells[1].value = highScores[i].name; // Assuming you have a "name" property
-      cells[2].value = highScores[i].score;
-    }
+    // Update the content of the cells
+    cells[0].value = index + 1; // Rank starts from 1
+    cells[1].value = highScores[index].name;
+    cells[2].value = highScores[index].score;
   }
 }
