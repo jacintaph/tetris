@@ -8,7 +8,7 @@ export class Score {
 
     Score._instance = this;
 
-    this.userScore = 100;
+    this.userScore = 0;
   }
 
   getHighScores() {
@@ -48,6 +48,6 @@ export class Score {
   }
 
   clearScore() {
-    this.userScore = 100;
+    this.userScore = 0;
   }
 }
