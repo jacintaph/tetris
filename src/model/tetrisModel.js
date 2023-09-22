@@ -72,7 +72,7 @@ export class TetrisModel {
       index = Math.floor(Math.random() * 9);
     }
     let block = new Tetromino(index, width);
-    // block.setBlockPosition(width);
+    block.setBlockPosition(width);
 
     return block;
   }
