@@ -1,6 +1,6 @@
 # Tetris Game
 
-![Tetris Game Screenshot](/src/icons/mainMenu.png)
+![Tetris Game Screenshot](/src/view/icons/mainMenu.png)
 
 ## Table of Contents
 
