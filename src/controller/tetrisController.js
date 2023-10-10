@@ -359,37 +359,37 @@ export class TetrisController {
   // }
 
   /*   NO BREAK but it works */
-  // movesAI() {
-  //   if (!this.game.aIMode && this.playing) {
-  //     for (let i = 0; i <= this.game.movesAI.length - 1; i++) {
-  //       let move = this.game.movesAI[i];
-  //       console.log("Moves: ", move);
-  //       switch (move) {
-  //         case "rotate": // up
-  //           this.game.rotateBlock();
-  //           this.updateView();
-  //           break;
-  //         case "left": // left
-  //           this.game.moveBlockLeft();
-  //           this.updateView();
-  //           break;
-  //         case "right": // right
-  //           this.game.moveBlockRight();
-  //           this.updateView();
-  //           break;
-  //         case "down": // down
-  //           this.game.moveBlockDown();
-  //           this.updateView();
-  //           break;
-  //       }
-  //       setTimeout(() => {
-  //         console.log("Delayed code");
-  //       }, 2000);
-  //     }
-  //   }
-  // }
+  movesAI() {
+    if (this.game.aIMode && this.playing) {
+      for (let i = 0; i <= this.game.movesAI.length - 1; i++) {
+        let move = this.game.movesAI[i];
+        console.log("Moves: ", move);
+        switch (move) {
+          case "rotate": // up
+            this.game.rotateBlock();
+            this.updateView();
+            break;
+          case "left": // left
+            this.game.moveBlockLeft();
+            this.updateView();
+            break;
+          case "right": // right
+            this.game.moveBlockRight();
+            this.updateView();
+            break;
+          case "down": // down
+            this.game.moveBlockDown();
+            this.updateView();
+            break;
+        }
+        // setTimeout(() => {
+        //   console.log("Delayed code");
+        // }, 2000);
+      }
+    }
+  }
 
-  async movesAI() {
+async movesAI() {
     if (this.game.aIMode && this.playing) {
       for (let i = 0; i <= this.game.movesAI.length - 1; i++) {
         // Collision straight away = full board
@@ -434,8 +434,8 @@ export class TetrisController {
         break;
     }
     setTimeout(function () {}, 100);
-  }
-
+  } 
+ 
   startTimer() {
     // start timer 'interval clicks' for block downward movement
     // speed increases at higher levels
