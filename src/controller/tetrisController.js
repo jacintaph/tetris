@@ -227,6 +227,11 @@ export class TetrisController {
         this.audioOn = this.view.toggleAudio(true);
       }
     });
+
+    // In your controller or wherever you want to subscribe to the event
+    document.addEventListener("movesAI", () => {
+      this.movesAI();
+    });
   }
 
   processScore() {
@@ -317,6 +322,120 @@ export class TetrisController {
     }
   }
 
+  // movesAI() {
+  //   if (!this.game.aIMode && this.playing) {
+  //     const moves = this.game.movesAI;
+  //     let currentIndex = 0;
+
+  //     const executeNextMove = () => {
+  //       if (currentIndex < moves.length) {
+  //         const move = moves[currentIndex];
+
+  //         switch (move) {
+  //           case "rotate": // up
+  //             this.game.rotateBlock();
+  //             this.updateView();
+  //             break;
+  //           case "left": // left
+  //             this.game.moveBlockLeft();
+  //             this.updateView();
+  //             break;
+  //           case "right": // right
+  //             this.game.moveBlockRight();
+  //             this.updateView();
+  //             break;
+  //           case "down": // down
+  //             this.game.moveBlockDown();
+  //             this.updateView();
+  //             break;
+  //         }
+  //         currentIndex++;
+
+  //         setTimeout(executeNextMove, 200);
+  //       }
+  //     };
+  //     executeNextMove();
+  //   }
+  // }
+
+  /*   NO BREAK but it works */
+  // movesAI() {
+  //   if (!this.game.aIMode && this.playing) {
+  //     for (let i = 0; i <= this.game.movesAI.length - 1; i++) {
+  //       let move = this.game.movesAI[i];
+  //       console.log("Moves: ", move);
+  //       switch (move) {
+  //         case "rotate": // up
+  //           this.game.rotateBlock();
+  //           this.updateView();
+  //           break;
+  //         case "left": // left
+  //           this.game.moveBlockLeft();
+  //           this.updateView();
+  //           break;
+  //         case "right": // right
+  //           this.game.moveBlockRight();
+  //           this.updateView();
+  //           break;
+  //         case "down": // down
+  //           this.game.moveBlockDown();
+  //           this.updateView();
+  //           break;
+  //       }
+  //       setTimeout(() => {
+  //         console.log("Delayed code");
+  //       }, 2000);
+  //     }
+  //   }
+  // }
+
+  async movesAI() {
+    if (this.game.aIMode && this.playing) {
+      for (let i = 0; i <= this.game.movesAI.length - 1; i++) {
+        // Collision straight away = full board
+        if (this.game.blockCollision()) {
+          this.game.boardFull = true; // set board is full attribute to true
+          document.dispatchEvent(this.game.gameOverEvent); // trigger game over event
+          return;
+        }
+
+        let move = this.game.movesAI[i];
+        console.log("Moves: ", move);
+
+        // Execute the move asynchronously
+        await this.executeMove(move);
+
+        // Introduce a delay between moves
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+    }
+  }
+
+  async executeMove(move) {
+    switch (move) {
+      case "rotate": // up
+        this.game.rotateBlock();
+        this.updateView();
+        // setTimeout(function () {}, 100);
+        break;
+      case "left": // left
+        this.game.moveBlockLeft();
+        this.updateView();
+        // setTimeout(function () {}, 100);
+        break;
+      case "right": // right
+        this.game.moveBlockRight();
+        this.updateView();
+        // setTimeout(function () {}, 100);
+        break;
+      case "down": // down
+        this.game.moveBlockDown();
+        this.updateView();
+        break;
+    }
+    setTimeout(function () {}, 100);
+  }
+
   startTimer() {
     // start timer 'interval clicks' for block downward movement
     // speed increases at higher levels
@@ -376,6 +495,7 @@ export class TetrisController {
 
   updateView() {
     const state = this.game.currentGameState(); // get current game state
+
     if (state.complete) {
       // if game is complete
       this.view.renderMainScreen(state);
@@ -388,7 +508,7 @@ export class TetrisController {
         this.processScore();
       }, 3000);
     } else {
-      this.view.renderMainScreen(state); // return to main menu screen
+      this.view.renderMainScreen(state); // render game screen
     }
   }
 }

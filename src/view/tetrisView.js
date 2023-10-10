@@ -152,13 +152,13 @@ export class TetrisView {
     gameBoardState.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
     // for each cell in the game board grid
-    for (let y = 0; y < gameBoardState.grid.length; y++) {
-      for (let x = 0; x < gameBoardState.grid[y].length; x++) {
+    for (let y = 0; y < gameBoardState.grid.length; y++) { // rows (12)
+      for (let x = 0; x < gameBoardState.grid[y].length; x++) { // columns (8)
         // block = number which corresponds to block type
         const block = gameBoardState.grid[y][x];
         const colour = config.blockColours[block];
 
-        // if the current cell is not = 0 = not empty
+        // if the current cell is not empty
         if (block) {
           // show a Tetromino tile
           this.renderBlock(
