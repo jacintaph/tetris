@@ -157,7 +157,7 @@ export class TetrisModel {
 
   setNextBlock() {
     this.currentBlock = this.nextBlock;
-
+    this.nextBlock = this.getBlock(this.width);
     if (this.aIMode) {
       var blockCpy = this.currentBlock.copy();
       var boardCopy = this.copyBoard(this.gameBoard.grid);
@@ -369,6 +369,7 @@ export class TetrisModel {
     if (this.blockCollision()) {
       this.boardFull = true; // set board is full attribute to true
       document.dispatchEvent(this.gameOverEvent); // trigger game over event
+      console.log("here")
       return;
     }
   }
