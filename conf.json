@@ -1,0 +1,12 @@
+{
+    "source": {
+        "includePattern": ".+\\.js(doc|x)?$",  
+        "include": [".", "./README.md"],                      
+        "exclude": ["node_modules"]             
+    },                      
+    "opts": {
+        "destination": "./docs/",    
+        "index": "./README.md",           
+        "recurse": true                         
+    }
+}

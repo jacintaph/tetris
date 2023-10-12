@@ -1,7 +1,5 @@
 # Tetris Game
 
-![Tetris Game Screenshot](/src/view/icons/mainMenu.png)
-
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -21,7 +19,7 @@ Welcome to Tetris, a classic puzzle game built using vanilla JavaScript, CSS, an
 
 ## Features
 
-![Tetris Game Screenshot](/src/icons/gamePlay.png)
+<!-- ![Tetris Game Screenshot](/src/icons/gamePlay.png) -->
 
 ## File List
 

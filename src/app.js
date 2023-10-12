@@ -14,8 +14,8 @@ class App {
   }
 
   run() {
-    // Begin the game by opening the start menu
-    this.tetrisController.openStartMenu();
+    // Begin the game by initialising game listeners 
+    this.tetrisController.startGameListeners();
   }
 }
 

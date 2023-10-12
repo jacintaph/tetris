@@ -38,7 +38,6 @@ export class Score {
   saveHighScoreData(userName) {
     let { scores } = this.getHighScores();
     const newScore = { userScore: this.userScore, userName };
-    console.log(newScore);
     // Add score to list and sort
     scores.push(newScore);
     scores.sort((a, b) => b.userScore - a.userScore);
