@@ -28,10 +28,7 @@ export class TetrisController {
   }
 
   /**
-   * @method
    * @description Initialises event listeners and observers
-   * @name startGameListeners
-   * @param
    */
   startGameListeners() {
     // create new instance of EventSubject (Observer pattern)
@@ -42,7 +39,6 @@ export class TetrisController {
   }
 
   /**
-   * @name createObservers
    * @description Creates observers for html button events and keyboard events
    */
   createObservers() {
@@ -162,6 +158,10 @@ export class TetrisController {
     );
   }
 
+  /**
+   *
+   * @description Sets JavaScript event listeners for all game events e.g. button clicks
+   */
   setEventListeners() {
     // This function sets event listeners via DOM element ID's
     // The event subject sets a 'notify' method when the event trigger occurs
@@ -401,6 +401,10 @@ export class TetrisController {
     });
   }
 
+  /**
+   *
+   * @description Sets JavaScript event listeners for game audio events e.g. sounds to play when a full row is made, or the game is over
+   */
   setGameAudio() {
     this.fullRowSound = document.getElementById("fullRow");
     this.gameOverSound = document.getElementById("gameOver");
@@ -428,6 +432,10 @@ export class TetrisController {
     console.log("Game Event Listeners Initialised...Ready to play Tetris!");
   }
 
+  /**
+   *
+   * @description Checks if a final user score is a high score (in the top 10), if so, it opens a dialog box to record a username
+   */
   processScore() {
     const state = this.game.currentGameState();
     // get final User Score and compare to the Leaderboard
@@ -520,6 +528,10 @@ export class TetrisController {
     }
   }
 
+  /**
+   *
+   * @description In AI mode this function loops through each move for the Tetromino and calls a function to execute the move
+   */
   async movesAI() {
     if (this.game.aIMode && this.playing) {
       for (let i = 0; i <= this.game.movesAI.length - 1; i++) {
@@ -539,6 +551,10 @@ export class TetrisController {
     }
   }
 
+  /**
+   *
+   * @description In AI mode, this function is called within movesAI() and calls the Tetromino movement functions to place the Tetromino
+   */
   async executeMove(move) {
     switch (move) {
       case "rotate": // up
@@ -564,6 +580,10 @@ export class TetrisController {
     setTimeout(function () {}, 100);
   }
 
+  /**
+   *
+   * @description Starts the interval timer during gameplay, which updates the state every interval and updates the game speed
+   */
   startTimer() {
     // start timer 'interval clicks' for block downward movement
     // speed increases at higher levels
@@ -578,6 +598,10 @@ export class TetrisController {
     }
   }
 
+  /**
+   *
+   * @description Clears the interval when the timer is stopped
+   */
   stopTimer() {
     // clear the interval when timer stopped
     if (this.intervalId) {
@@ -586,6 +610,10 @@ export class TetrisController {
     }
   }
 
+  /**
+   *
+   * @description Starts the game timer, updates the UI and sets variables play and pause to true and false, respectively
+   */
   play() {
     this.startTimer();
     this.updateView();
@@ -593,6 +621,10 @@ export class TetrisController {
     this.paused = false;
   }
 
+  /**
+   *
+   * @description In AI mode, this function is called within movesAI() and calls the Tetromino movement functions to place the Tetromino
+   */
   pause() {
     this.playing = false;
     this.paused = true;
@@ -600,6 +632,10 @@ export class TetrisController {
     this.updateView();
   }
 
+  /**
+   *
+   * @description In AI mode, this function is called within movesAI() and calls the Tetromino movement functions to place the Tetromino
+   */
   clearGame() {
     this.playing = false;
     this.paused = false;
@@ -608,6 +644,10 @@ export class TetrisController {
     this.game.nextBlockCanvas.clear();
   }
 
+  /**
+   *
+   * @description In AI mode, this function is called within movesAI() and calls the Tetromino movement functions to place the Tetromino
+   */
   updateState() {
     // update the game state
     this.game.moveBlockDown();
@@ -621,6 +661,10 @@ export class TetrisController {
     this.updateView();
   }
 
+  /**
+   *
+   * @description In AI mode, this function is called within movesAI() and calls the Tetromino movement functions to place the Tetromino
+   */
   updateView() {
     const state = this.game.currentGameState(); // get current game state
 

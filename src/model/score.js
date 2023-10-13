@@ -1,5 +1,14 @@
 import * as config from "./gameItems/variables.js";
 
+/**
+ * @class Score
+ * @constructs
+ * @param {class} Game The Tetris Model class containing game logic
+ * @param {class} View The Tetris View class containing UI logic
+ * @classdesc The Score class is responsible for all high score logic, including retrieval and storage.
+ * @example
+ * const instance = new Score()
+ */
 export class Score {
   constructor() {
     if (Score._instance) {

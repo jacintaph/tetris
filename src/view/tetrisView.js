@@ -1,5 +1,13 @@
 import * as config from "../model/gameItems/variables.js";
 
+/**
+ * @class TetrisView
+ * @constructs
+
+ * @classdesc The Tetris View class is responsible for all application UI updates. It is requested by the TetrisController throughout the game to re-render pages, update page elements, and to hide / show elements. 
+ * @example
+ * const instance = new TetrisView()
+ */
 export class TetrisView {
   constructor() {
     if (TetrisView._instance) {
@@ -11,32 +19,50 @@ export class TetrisView {
   // The following function toggle off the current screen +/- toggle on the screen requested
   // This will be the screen name in the function title
 
+  /**
+   * @description Opens the Start page
+   */
   showStartScreen() {
     this.toggleScreen("startScreen", true);
   }
 
+  /**
+   * @description Opens the Game page
+   */
   showGameScreen() {
     this.toggleScreen("startScreen", false);
     this.toggleScreen("gameScreen", true);
     this.toggleScreen("canvas", true);
   }
 
+  /**
+   * @description Opens the Configuration page
+   */
   showConfig() {
     this.toggleScreen("startScreen", false);
     this.toggleScreen("config", true);
   }
 
+  /**
+   * @description Opens the High Scores page
+   */
   showScores() {
     this.renderHighScoresTable();
     this.toggleScreen("startScreen", false);
     this.toggleScreen("highscores", true);
   }
 
+  /**
+   * @description Opens the Exit Program page
+   */
   showExitScreen() {
     this.toggleScreen("startScreen", false);
     this.toggleScreen("closeScreen", true);
   }
 
+  /**
+   * @description Opens the exit game dialog box
+   */
   showEscScreen() {
     // only show esc screen if currently on the game screen
     if (!document.getElementById("gameScreen").classList.contains("hidden")) {
@@ -152,8 +178,10 @@ export class TetrisView {
     gameBoardState.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
     // for each cell in the game board grid
-    for (let y = 0; y < gameBoardState.grid.length; y++) { // rows (12)
-      for (let x = 0; x < gameBoardState.grid[y].length; x++) { // columns (8)
+    for (let y = 0; y < gameBoardState.grid.length; y++) {
+      // rows (12)
+      for (let x = 0; x < gameBoardState.grid[y].length; x++) {
+        // columns (8)
         // block = number which corresponds to block type
         const block = gameBoardState.grid[y][x];
         const colour = config.blockColours[block];

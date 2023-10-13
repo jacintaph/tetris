@@ -1,3 +1,10 @@
+/**
+ * @class Configuration
+ * @constructs
+ * @classdesc The Configuration class handles all event listeners and input validation for the Configuration page
+ * @example
+ * const instance = new Configuration()
+ */
 export class Configuration {
   constructor() {
     if (Configuration._instance) {

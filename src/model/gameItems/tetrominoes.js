@@ -1,5 +1,12 @@
 import * as constants from "./variables.js";
 
+/**
+ * @class Tetromino
+ * @constructs
+ * @classdesc The Tetris View class is responsible for all application UI updates. It is requested by the TetrisController throughout the game to re-render pages, update page elements, and to hide / show elements. 
+ * @example
+ * const instance = new Tetromino(1)
+ */
 export class Tetromino {
   constructor(index) {
     this.index = index;

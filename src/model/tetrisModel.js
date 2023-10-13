@@ -2,7 +2,6 @@ import * as config from "./gameItems/variables.js";
 import { BoardCanvas, NextBlockCanvas } from "./canvas.js";
 import { Tetromino } from "./gameItems/tetrominoes.js";
 import { Score } from "./score.js";
-import { AI } from "./artificialIntelligence.js";
 import { CustomError } from "../controller/error.js";
 
 /**
@@ -21,13 +20,15 @@ export class TetrisModel {
 
     this.createNewGame();
     this.score = new Score();
-    this.aI = new AI();
     this.nextBlockCanvas = new NextBlockCanvas();
     this.fullRowEvent = new Event("fullRow");
     this.gameOverEvent = new Event("gameOver");
     this.movesAIEvent = new Event("movesAI");
   }
 
+   /**
+   * @description Creates a new Tetris game by updating game settings, and resetting Tetrominos
+   */
   createNewGame() {
     // create a new game, reset key attributes
     this.updateGameSettings(); // update game attributes as per config page
@@ -42,6 +43,10 @@ export class TetrisModel {
     this.moveBlockAI = false;
   }
 
+   /**
+   * @description Returns game settings from the configuration page data
+   * @returns {object} Collection of game data, including board width, height, level, game and player mode
+   */
   getUserSettings() {
     // Get the user-selected game level value from the input element / or auto default value
     const widthInput = document.getElementById("width");
@@ -60,6 +65,9 @@ export class TetrisModel {
     };
   }
 
+   /**
+   * @description Initialises event listeners and observers
+   */
   updateGameSettings() {
     try {
       const { width, height, gameLevel, gameMode, playerMode } =

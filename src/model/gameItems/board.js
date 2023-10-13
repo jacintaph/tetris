@@ -1,3 +1,14 @@
+/**
+ * @class Board
+ * @constructs
+ * @param {object} ctx An object containing parameters and methods to render graphics inside a HTML Canvas element
+ * @param {integer} width The board width
+ * @param {integer} height The board height
+
+ * @classdesc The Board class creates an empty board (array) for the Tetris game board, according to the height and width parameters given.
+ * @example
+ * const instance = new Board(ctx, 10, 12)
+ */
 export class Board {
   constructor(ctx, width, height) {
     this.ctx = ctx;
