@@ -12,7 +12,15 @@ export class EventSubject {
 
   notify(event, data) {
     if (this.observers[event]) {
-      this.observers[event].forEach((observer) => observer.update(data));
+      // if there exists observers for this event
+      try {
+        this.observers[event].forEach((observer) => observer.update(data));
+        return true;
+      } catch (error) {
+        console.error("Error updating Game events");
+      }
+    } else {
+      return false;
     }
   }
 }

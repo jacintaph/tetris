@@ -3,6 +3,7 @@ import { BoardCanvas, NextBlockCanvas } from "./canvas.js";
 import { Tetromino } from "./gameItems/tetrominoes.js";
 import { Score } from "./score.js";
 import { AI } from "./artificialIntelligence.js";
+import { CustomError } from "../controller/error.js";
 
 /**
  * @class TetrisModel
@@ -30,6 +31,9 @@ export class TetrisModel {
   createNewGame() {
     // create a new game, reset key attributes
     this.updateGameSettings(); // update game attributes as per config page
+    // Errors would've been thrown above if not valid
+    console.log("Game settings Updated.");
+
     this.lines = 0;
     this.boardFull = false;
     this.currentBlock = this.getBlock(this.width);
@@ -57,19 +61,45 @@ export class TetrisModel {
   }
 
   updateGameSettings() {
-    const { width, height, gameLevel, gameMode, playerMode } =
-      this.getUserSettings();
-    this.width = width;
-    this.height = height;
-    this.boardCanvas = new BoardCanvas(this.width, this.height); // create a new game board
-    this.gameBoard = this.boardCanvas.getBoard();
-    this.gameLevel = gameLevel;
-    this.gameMode = gameMode;
-    this.playerMode = playerMode;
-    if (this.playerMode === "AI") {
-      this.aIMode = true;
-    } else {
-      this.aIMode = false;
+    try {
+      const { width, height, gameLevel, gameMode, playerMode } =
+        this.getUserSettings();
+      this.width = width;
+      this.height = height;
+      this.boardCanvas = new BoardCanvas(this.width, this.height); // create a new game board
+
+      if (!this.boardCanvas) {
+        throw new CustomError(
+          "Error updating game settings."
+        );
+      }
+
+      this.gameBoard = this.boardCanvas.getBoard();
+
+      if (!this.gameBoard) {
+        throw new CustomError(
+          "Error updating game settings."
+        );
+      }
+
+      this.gameLevel = gameLevel;
+      this.gameMode = gameMode;
+      this.playerMode = playerMode;
+      if (this.playerMode === "AI") {
+        this.aIMode = true;
+      } else {
+        this.aIMode = false;
+      }
+    } catch (error) {
+      alert(error.message);
+      console.error(error.message);
+
+      // Implement a fault recovery strategy here
+      const recoveryOption = confirm("Do you want to reset the game settings by reloading the page?");
+
+      if (recoveryOption) {
+        window.location.reload();
+      }
     }
   }
 
@@ -411,7 +441,7 @@ export class TetrisModel {
     if (this.blockCollision()) {
       this.boardFull = true; // set board is full attribute to true
       document.dispatchEvent(this.gameOverEvent); // trigger game over event
-      console.log("here")
+      console.log("here");
       return;
     }
   }

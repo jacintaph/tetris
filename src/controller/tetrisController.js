@@ -1,5 +1,6 @@
 import { EventSubject, EventObserver } from "./observer.js";
 import { Configuration } from "./configuration.js";
+import { CustomError } from "./error.js";
 
 /**
  * @class TetrisController
@@ -169,62 +170,234 @@ export class TetrisController {
     // Play btn on Main Menu Start Screen
     const playBtn = document.getElementById("playBtn");
     playBtn.addEventListener("click", () => {
-      this.eventSubject.notify("play");
+      try {
+        if (!this.eventSubject.notify("play")) {
+          throw new CustomError("Error Initialising Game.");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const configBtn = document.getElementById("configBtn");
     configBtn.addEventListener("click", () => {
-      this.eventSubject.notify("config");
+      try {
+        if (!this.eventSubject.notify("config")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const scoresBtn = document.getElementById("scoresBtn");
     scoresBtn.addEventListener("click", () => {
-      this.eventSubject.notify("scores");
+      try {
+        if (!this.eventSubject.notify("scores")) {
+          throw new CustomError("Error Initialising Game.");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const exitBtn = document.getElementById("exitBtn");
     exitBtn.addEventListener("click", () => {
-      this.eventSubject.notify("exitGame");
+      try {
+        if (!this.eventSubject.notify("exitGame")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const configCloseBtn = document.getElementById("configCloseBtn");
     configCloseBtn.addEventListener("click", () => {
-      this.eventSubject.notify("configCloseBtn");
+      try {
+        if (!this.eventSubject.notify("configCloseBtn")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const scoresCloseBtn = document.getElementById("scoresCloseBtn");
     scoresCloseBtn.addEventListener("click", () => {
-      this.eventSubject.notify("scoresCloseBtn");
+      try {
+        if (!this.eventSubject.notify("scoresCloseBtn")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const confirmBtn = document.getElementById("confirmBtn");
     confirmBtn.addEventListener("click", () => {
-      this.eventSubject.notify("confirmBtn");
+      try {
+        if (!this.eventSubject.notify("confirmBtn")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const cancelBtn = document.getElementById("cancelBtn");
     cancelBtn.addEventListener("click", () => {
-      this.eventSubject.notify("cancelBtn");
+      try {
+        if (!this.eventSubject.notify("cancelBtn")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const save = document.getElementById("saveConfirmBtn");
     save.addEventListener("click", () => {
-      this.eventSubject.notify("scoreSaveBtn");
+      try {
+        if (!this.eventSubject.notify("scoreSaveBtn")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     const cancel = document.getElementById("saveCancelBtn");
     cancel.addEventListener("click", () => {
-      this.eventSubject.notify("scoreCancelBtn");
+      try {
+        if (!this.eventSubject.notify("scoreCancelBtn")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     document.addEventListener("keydown", (event) => {
-      this.eventSubject.notify("keyBoardPress", event);
+      try {
+        if (!this.eventSubject.notify("keyBoardPress", event)) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+
+        const recoveryOption = confirm(
+          "Do you want to reset the game settings by reloading the page?"
+        );
+
+        if (recoveryOption) {
+          window.location.reload();
+        }
+      }
     });
 
     // Green start button on Game Screen
     const startGameBtn = document.getElementById("startBtn");
     startGameBtn.addEventListener("click", () => {
-      this.eventSubject.notify("startGameBtn");
+      try {
+        if (!this.eventSubject.notify("startGameBtn")) {
+          throw new CustomError("Error Initialising Game. ");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error(error.message);
+      }
     });
   }
 
@@ -251,6 +424,8 @@ export class TetrisController {
     document.addEventListener("movesAI", () => {
       this.movesAI();
     });
+
+    console.log("Game Event Listeners Initialised...Ready to play Tetris!");
   }
 
   processScore() {
